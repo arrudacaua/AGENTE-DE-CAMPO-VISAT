@@ -28,10 +28,12 @@ Desenvolver uma solução que permita:
 
 ## 📁 Estrutura do projeto
 
+```text
 src/
 ├── frontend/
 ├── backend/
 └── database/
+```
 
 - **frontend/** — interface e elementos visuais do sistema.
 - **backend/** — regras e funcionalidades da aplicação.
