@@ -46,7 +46,7 @@ Projeto desenvolvido por estudantes de Sistemas de Informação.
 - CAUÃ FERREIRA ARRUDA - Gerente de projeto
 - ISABELLY RIBEIRO DO CARMO - Desiger
 - JOAO GABRIEL CASSIMIRO DE ARAUJO - Desenvolvedor beck-end
-- JOÃO PAULO DO NASCIMENTO - Product owner(PO)
+- JOÃO PAULO DO NASCIMENTO - Product owner (PO)
 - LETÍCIA CARVALHO BARBOSA - Designer
 - SOFIA MARTINS VAN DRUNEN - Arquiteta de softawre
 - SURI SAVITRI PROCÓPIO ALVES - Analista de requisitos 
