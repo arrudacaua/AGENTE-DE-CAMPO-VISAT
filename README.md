@@ -43,14 +43,14 @@ src/
 
 Projeto desenvolvido por estudantes de Sistemas de Informação.
 
-- CAUÃ FERREIRA ARRUDA
-- ISABELLY RIBEIRO DO CARMO
-- JOAO GABRIEL CASSIMIRO DE ARAUJO
-- JOÃO PAULO DO NASCIMENTO
-- LETÍCIA CARVALHO BARBOSA
-- SOFIA MARTINS VAN DRUNEN
-- SURI SAVITRI PROCÓPIO ALVES
-- VINÍCIUS MACHADO LIMA
+- CAUÃ FERREIRA ARRUDA - Gerente de projeto
+- ISABELLY RIBEIRO DO CARMO - Desiger
+- JOAO GABRIEL CASSIMIRO DE ARAUJO - Desenvolvedor beck-end
+- JOÃO PAULO DO NASCIMENTO - Product owner(PO)
+- LETÍCIA CARVALHO BARBOSA - Designer
+- SOFIA MARTINS VAN DRUNEN - Arquiteta de softawre
+- SURI SAVITRI PROCÓPIO ALVES - Analista de requisitos 
+- VINÍCIUS MACHADO LIMA - Desenvolvedor front-end
 
 ## 📌 Status
 
