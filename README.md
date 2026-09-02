@@ -61,20 +61,13 @@ O backlog possui no mínimo 15 Histórias de Usuário priorizadas, seguindo o pa
 Projeto desenvolvido por estudantes de Sistemas de Informação.
 
 - CAUÃ FERREIRA ARRUDA - Gerente de Projeto
-  * Linkedin:
 - ISABELLY RIBEIRO DO CARMO - Designer
-  * Linkedin:
 - JOÃO GABRIEL CASSIMIRO DE ARAUJO - Desenvolvedor Back-end
-  * Linkedin:
 - JOÃO PAULO DO NASCIMENTO - Product Owner (PO)
-  * Linkedin: linkedin.com/in/jo%C3%A3o-nascimento-drones
 - LETÍCIA CARVALHO BARBOSA - Designer
-  * [Acessar o Linkedin](https://www.linkedin.com/in/surisavitriprocopioalves)
 - SOFIA MARTINS VAN DRUNEN - Arquiteta de Software
-- SURI SAVITRI PROCÓPIO ALVES - Analista de Requisitos
-  * Linkedin: <linkedin.com/in/surisavitriprocopioalves>
+- [SURI SAVITRI PROCÓPIO ALVES](https://www.linkedin.com/in/surisavitriprocopioalves) - Analista de Requisitos
 - VINÍCIUS MACHADO LIMA - Desenvolvedor Front-end
-  * Linkedin:
 
 ## 📸 Evidências
 
