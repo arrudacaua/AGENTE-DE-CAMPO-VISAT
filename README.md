@@ -69,7 +69,7 @@ Projeto desenvolvido por estudantes de Sistemas de Informação.
 - JOÃO PAULO DO NASCIMENTO - Product Owner (PO)
   * Linkedin: linkedin.com/in/jo%C3%A3o-nascimento-drones
 - LETÍCIA CARVALHO BARBOSA - Designer
-  * [Acessar o Linkedin]: (linkedin.com/in/leticiacarvalhobarbosa)
+  * [Acessar o Linkedin](https://www.linkedin.com/in/surisavitriprocopioalves)
 - SOFIA MARTINS VAN DRUNEN - Arquiteta de Software
 - SURI SAVITRI PROCÓPIO ALVES - Analista de Requisitos
   * Linkedin: <linkedin.com/in/surisavitriprocopioalves>
