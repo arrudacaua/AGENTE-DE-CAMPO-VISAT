@@ -65,7 +65,7 @@ Projeto desenvolvido por estudantes de Sistemas de Informação.
 - [JOÃO GABRIEL CASSIMIRO DE ARAUJO](https://www.linkedin.com/in/joao-cassimiro?utm_source=share_via&utm_content=profile&utm_medium=member_ios) - Desenvolvedor Back-end
 - [JOÃO PAULO DO NASCIMENTO](https://www.linkedin.com/in/joão-nascimento-drones?utm_source=share_via&utm_content=profile&utm_medium=member_android) - Product Owner (PO)
 - [LETÍCIA CARVALHO BARBOSA](https://www.linkedin.com/in/leticiacarvalhobarbosa/) - Designer
-- SOFIA MARTINS VAN DRUNEN - Arquiteta de Software
+- [SOFIA MARTINS VAN DRUNEN](https://www.linkedin.com/in/sofia-martins-van-drunen-096a08426/) - Arquiteta de Software
 - [SURI SAVITRI PROCÓPIO ALVES](https://www.linkedin.com/in/surisavitriprocopioalves) - Analista de Requisitos
 - [VINÍCIUS MACHADO LIMA](https://www.linkedin.com/in/vinicius-machado-lima-5a4100406?utm_source=share_via&utm_content=profile&utm_medium=member_android) - Desenvolvedor Front-end
 
