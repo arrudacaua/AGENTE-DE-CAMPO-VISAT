@@ -25,6 +25,17 @@ Desenvolver uma solução que permita:
 
 ## ⚙️ Funcionalidades
 
+- Cadastro de demandas (registro e visualização das solicitações recebidas, centralizando as informações da demanda);
+- Acompanhamento do status das demandas (atualização e consulta da situação atual de cada demanda durante o atendimento);
+- Atribuição de responsáveis (designação de Técnicos de Fiscalização para organizar as atividades da equipe);
+- Controle de prazos e prioridades (definição de prazo e prioridade das demandas, com alertas de vencimento);
+- Anexação de documentos (permite anexar, organizar e consultar documentos e relatórios relacionados às demandas);
+- Busca e filtros de demandas (localização rápida de solicitações por pesquisa ou critérios específicos);
+- Painel de indicadores (visão geral do andamento das demandas por meio de indicadores consolidados);
+- Histórico de alterações (registro cronológico das principais ações realizadas em cada demanda);
+- Controle de acesso por perfil (define quais funcionalidades cada perfil pode acessar no sistema);
+- Autenticação de usuário (acesso ao sistema apenas para usuários com credenciais próprias);
+
 ## 🛠️ Tecnologias
 
 - HTML
