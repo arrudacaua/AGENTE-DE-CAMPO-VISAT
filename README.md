@@ -60,14 +60,14 @@ O backlog possui no mínimo 15 Histórias de Usuário priorizadas, seguindo o pa
 
 Projeto desenvolvido por estudantes de Sistemas de Informação.
 
-- CAUÃ FERREIRA ARRUDA - Gerente de Projeto
-- ISABELLY RIBEIRO DO CARMO - Designer
-- JOÃO GABRIEL CASSIMIRO DE ARAUJO - Desenvolvedor Back-end
-- JOÃO PAULO DO NASCIMENTO - Product Owner (PO)
-- LETÍCIA CARVALHO BARBOSA - Designer
+- [CAUÃ FERREIRA ARRUDA](https://www.linkedin.com/in/cauã-arruda-0b30563b0?utm_source=share_via&utm_content=profile&utm_medium=member_ios) - Gerente de Projeto
+- [ISABELLY RIBEIRO DO CARMO](https://www.linkedin.com/in/isabellyribeiroc?utm_source=share_via&utm_content=profile&utm_medium=member_ios) - Designer
+- [JOÃO GABRIEL CASSIMIRO DE ARAUJO](https://www.linkedin.com/in/joao-cassimiro?utm_source=share_via&utm_content=profile&utm_medium=member_ios) - Desenvolvedor Back-end
+- [JOÃO PAULO DO NASCIMENTO](https://www.linkedin.com/in/joão-nascimento-drones?utm_source=share_via&utm_content=profile&utm_medium=member_android) - Product Owner (PO)
+- [LETÍCIA CARVALHO BARBOSA](linkedin.com/in/leticiacarvalhobarbosa) - Designer
 - SOFIA MARTINS VAN DRUNEN - Arquiteta de Software
 - [SURI SAVITRI PROCÓPIO ALVES](https://www.linkedin.com/in/surisavitriprocopioalves) - Analista de Requisitos
-- VINÍCIUS MACHADO LIMA - Desenvolvedor Front-end
+- [VINÍCIUS MACHADO LIMA](https://www.linkedin.com/in/vinicius-machado-lima-5a4100406?utm_source=share_via&utm_content=profile&utm_medium=member_android) - Desenvolvedor Front-end
 
 ## 📸 Evidências
 
