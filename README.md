@@ -89,7 +89,7 @@ O backlog possui no mínimo 15 Histórias de Usuário priorizadas, seguindo o pa
 ### 📚 Backlog priorizado
 
 <p align="center">
-  <img src="docs/backlog.png" alt="Backlog priorizado" width="850">
+  <img src="docs/backlog.png" alt="Backlog priorizado" width="350">
 </p>
 
 ## 👥 Equipe
