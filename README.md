@@ -1,21 +1,18 @@
-# VISAT
+# 🔎 AGENTE DE CAMPO VISAT
 
 <p align="center">
   <img src="docs/banner-visat.png" alt="VISAT Banner" width="350">
 </p>
 
-Sistema web para centralizar, organizar e acompanhar demandas do VISAT,
-facilitando o controle de solicitações, inspeções, documentos, responsáveis
-e andamento dos processos.
+<p align="center">
+  Sistema web para centralizar, organizar e acompanhar as demandas da Vigilância em Saúde do Trabalhador.
+</p>
 
 ## 🎯 Sobre o projeto
 
-O VISAT recebe demandas de diferentes instituições que podem resultar em
-inspeções, análises e elaboração de documentos técnicos.
+O VISAT recebe demandas de diferentes instituições que podem resultar em inspeções, análises e elaboração de documentos técnicos.
 
-O projeto busca centralizar essas informações em um único sistema,
-facilitando o acompanhamento das demandas e melhorando a organização
-dos processos.
+O projeto busca centralizar essas informações, facilitando o acompanhamento das demandas e a organização dos processos.
 
 ## 🚀 Objetivo
 
@@ -29,34 +26,48 @@ Desenvolver uma solução que permita:
 
 ## ⚙️ Funcionalidades
 
-- Cadastro de demandas (registro e visualização das solicitações recebidas, centralizando as informações da demanda);
-- Acompanhamento do status das demandas (atualização e consulta da situação atual de cada demanda durante o atendimento);
-- Atribuição de responsáveis (designação de Técnicos de Fiscalização para organizar as atividades da equipe);
-- Controle de prazos e prioridades (definição de prazo e prioridade das demandas, com alertas de vencimento);
-- Anexação de documentos (permite anexar, organizar e consultar documentos e relatórios relacionados às demandas);
-- Busca e filtros de demandas (localização rápida de solicitações por pesquisa ou critérios específicos);
-- Painel de indicadores (visão geral do andamento das demandas por meio de indicadores consolidados);
-- Histórico de alterações (registro cronológico das principais ações realizadas em cada demanda);
-- Controle de acesso por perfil (define quais funcionalidades cada perfil pode acessar no sistema);
-- Autenticação de usuário (acesso ao sistema apenas para usuários com credenciais próprias);
+### 📋 Gestão de Demandas
+
+- Cadastro de demandas
+- Acompanhamento do status das demandas
+- Atribuição de responsáveis
+- Controle de prazos e prioridades
+- Anexação de documentos
+- Busca e filtros de demandas
+- Painel de indicadores
+- Histórico de alterações
+
+### 🔐 Acesso ao Sistema
+
+- Controle de acesso por perfil
+- Autenticação de usuários
 
 ## 🛠️ Tecnologias
 
-- HTML
-- CSS
-- JavaScript
-- Python
-- MySQL
+<p align="center">
+  <img src="https://skillicons.dev/icons?i=html,css,js,python,mysql" alt="Tecnologias">
+</p>
 
 ## 📁 Estrutura do projeto
 
 ```text
-src/
-├── frontend/
-├── backend/
-└── database/
+VISAT/
+├── docs/
+│   ├── banner-visat.png
+│   ├── board.png
+│   └── backlog.png
+│
+├── src/
+│   ├── frontend/
+│   ├── backend/
+│   └── database/
+│
+├── .gitignore
+├── README.md
+└── requirements.txt
 ```
 
+- **docs/** — imagens, evidências e documentação do projeto.
 - **frontend/** — interface e elementos visuais do sistema.
 - **backend/** — regras e funcionalidades da aplicação.
 - **database/** — estrutura e comandos do banco de dados.
@@ -69,7 +80,17 @@ O desenvolvimento é organizado através de um Board Kanban:
 
 O backlog possui no mínimo 15 Histórias de Usuário priorizadas, seguindo o padrão 3Cs: Card, Conversation e Confirmation.
 
+<p align="center">
+  <img src="docs/board.png" alt="Board atualizado" width="850">
+</p>
+
 🔗 [Acessar o Board do projeto](https://trello.com/b/er7tMowp/visat)
+
+### 📚 Backlog priorizado
+
+<p align="center">
+  <img src="docs/backlog.png" alt="Backlog priorizado" width="850">
+</p>
 
 ## 👥 Equipe
 
@@ -83,16 +104,6 @@ Projeto desenvolvido por estudantes de Sistemas de Informação.
 - [SOFIA MARTINS VAN DRUNEN](https://www.linkedin.com/in/sofia-martins-van-drunen-096a08426/) - Arquiteta de Software
 - [SURI SAVITRI PROCÓPIO ALVES](https://www.linkedin.com/in/surisavitriprocopioalves) - Analista de Requisitos
 - [VINÍCIUS MACHADO LIMA](https://www.linkedin.com/in/vinicius-machado-lima-5a4100406?utm_source=share_via&utm_content=profile&utm_medium=member_android) - Desenvolvedor Front-end
-
-## 📸 Evidências
-
-### Board atualizado
-
-![Board atualizado](docs/board.png)
-
-### Backlog priorizado
-
-![Backlog priorizado](docs/backlog.png)
 
 ## 📌 Status
 
