@@ -1,5 +1,9 @@
 # VISAT
 
+<p align="center">
+  <img src="docs/banner-visat.png" alt="VISAT Banner" width="800">
+</p>
+
 Sistema web para centralizar, organizar e acompanhar demandas do VISAT,
 facilitando o controle de solicitações, inspeções, documentos, responsáveis
 e andamento dos processos.
