@@ -1,7 +1,7 @@
 # VISAT
 
 <p align="center">
-  <img src="docs/banner-visat.png" alt="VISAT Banner" width="800">
+  <img src="docs/banner-visat.png" alt="VISAT Banner" width="350">
 </p>
 
 Sistema web para centralizar, organizar e acompanhar demandas do VISAT,
