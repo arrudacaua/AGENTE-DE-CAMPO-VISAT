@@ -38,7 +38,7 @@ Desenvolver uma solução que permita:
 - Anexação de documentos
 - Registro do relatório de inspeção
 
-###🔎 Busca e Filtros
+### 🔎 Busca e Filtros
 
 - Pesquisa e filtro de demandas
 
