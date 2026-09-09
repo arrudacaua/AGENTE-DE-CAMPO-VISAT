@@ -26,14 +26,14 @@ Desenvolver uma solução que permita:
 
 ## ⚙️ Funcionalidades
 
-**📋 Gestão de Ordens de Serviço**
+### 📋 Gestão de Ordens de Serviço
 
 - Cadastro de Ordem de Serviço
 - Definição de prioridade e registro de prazo
 - Atribuição de responsável e atualização do status
 - Consulta dos detalhes da demanda
 
-**📎 Gestão de Documentos e Inspeções**
+### 📎 Gestão de Documentos e Inspeções
 
 - Anexação de documentos
 - Registro do relatório de inspeção
@@ -42,16 +42,16 @@ Desenvolver uma solução que permita:
 
 - Pesquisa e filtro de demandas
 
-**📊 Monitoramento e Indicadores**
+### 📊 Monitoramento e Indicadores
 
 - Alertas de prazo
 - Visualização do dashboard e consulta do histórico
 
-**🔐 Acesso ao Sistema**
+### 🔐 Acesso ao Sistema
 
 - Controle de acesso por perfil e autenticação de usuário
 
-**🏛️ Integração com o SEI**
+### 🏛️ Integração com o SEI
 
 - Validação e vinculação de processo SEI
 - Entrada de demandas externas pelo SEI
