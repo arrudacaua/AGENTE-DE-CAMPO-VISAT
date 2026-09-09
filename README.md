@@ -24,7 +24,7 @@ Desenvolver uma solução que permita:
 - Controlar responsáveis e prazos;
 - Melhorar a visualização das demandas e seus respectivos status.
 
-##⚙️ Funcionalidades
+#⚙️ Funcionalidades
 
 ###📋 Gestão de Ordens de Serviço
 
@@ -51,7 +51,7 @@ Desenvolver uma solução que permita:
 
 - Controle de acesso por perfil e autenticação de usuário
 
-###🏛️ Integração com o SEI
+**🏛️ Integração com o SEI**
 
 - Validação e vinculação de processo SEI
 - Entrada de demandas externas pelo SEI
