@@ -24,16 +24,16 @@ Desenvolver uma solução que permita:
 - Controlar responsáveis e prazos;
 - Melhorar a visualização das demandas e seus respectivos status.
 
-#⚙️ Funcionalidades
+***⚙️ Funcionalidades***
 
-###📋 Gestão de Ordens de Serviço
+**📋 Gestão de Ordens de Serviço**
 
 - Cadastro de Ordem de Serviço
 - Definição de prioridade e registro de prazo
 - Atribuição de responsável e atualização do status
 - Consulta dos detalhes da demanda
 
-###📎 Gestão de Documentos e Inspeções
+**📎 Gestão de Documentos e Inspeções**
 
 - Anexação de documentos
 - Registro do relatório de inspeção
@@ -42,12 +42,12 @@ Desenvolver uma solução que permita:
 
 - Pesquisa e filtro de demandas
 
-###📊 Monitoramento e Indicadores
+**📊 Monitoramento e Indicadores**
 
 - Alertas de prazo
 - Visualização do dashboard e consulta do histórico
 
-###🔐 Acesso ao Sistema
+**🔐 Acesso ao Sistema**
 
 - Controle de acesso por perfil e autenticação de usuário
 
