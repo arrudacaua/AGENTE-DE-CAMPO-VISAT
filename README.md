@@ -24,23 +24,38 @@ Desenvolver uma solução que permita:
 - Controlar responsáveis e prazos;
 - Melhorar a visualização das demandas e seus respectivos status.
 
-## ⚙️ Funcionalidades
+##⚙️ Funcionalidades
 
-### 📋 Gestão de Demandas
+###📋 Gestão de Ordens de Serviço
 
-- Cadastro de demandas
-- Acompanhamento do status das demandas
-- Atribuição de responsáveis
-- Controle de prazos e prioridades
+- Cadastro de Ordem de Serviço
+- Definição de prioridade e registro de prazo
+- Atribuição de responsável e atualização do status
+- Consulta dos detalhes da demanda
+
+###📎 Gestão de Documentos e Inspeções
+
 - Anexação de documentos
-- Busca e filtros de demandas
-- Painel de indicadores
-- Histórico de alterações
+- Registro do relatório de inspeção
 
-### 🔐 Acesso ao Sistema
+###🔎 Busca e Filtros
 
-- Controle de acesso por perfil
-- Autenticação de usuários
+- Pesquisa e filtro de demandas
+
+###📊 Monitoramento e Indicadores
+
+- Alertas de prazo
+- Visualização do dashboard e consulta do histórico
+
+###🔐 Acesso ao Sistema
+
+- Controle de acesso por perfil e autenticação de usuário
+
+###🏛️ Integração com o SEI
+
+- Validação e vinculação de processo SEI
+- Entrada de demandas externas pelo SEI
+
 
 ## 🛠️ Tecnologias
 
