@@ -24,7 +24,7 @@ Desenvolver uma solução que permita:
 - Controlar responsáveis e prazos;
 - Melhorar a visualização das demandas e seus respectivos status.
 
-***⚙️ Funcionalidades***
+## ⚙️ Funcionalidades
 
 **📋 Gestão de Ordens de Serviço**
 
