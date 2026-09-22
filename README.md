@@ -60,8 +60,15 @@ Desenvolver uma solução que permita:
 ## 🛠️ Tecnologias
 
 <p align="center">
-  <img src="https://skillicons.dev/icons?i=html,css,js,python,mysql" alt="Tecnologias">
+  <img src="https://skillicons.dev/icons?i=html,css,js,python,mysql,git,github" />
 </p>
+
+<p align="center">
+  HTML • CSS • JavaScript • Python • MySQL • Git • GitHub
+</p>
+
+> ⚠️ A arquitetura e as tecnologias específicas do projeto poderão ser
+> atualizadas conforme o desenvolvimento da aplicação avançar.
 
 ## 📁 Estrutura do projeto
 
