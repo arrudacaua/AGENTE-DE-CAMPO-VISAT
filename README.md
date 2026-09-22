@@ -10,9 +10,7 @@
 
 ## 🎯 Sobre o projeto
 
-O VISAT recebe demandas de diferentes instituições que podem resultar em inspeções, análises e elaboração de documentos técnicos.
-
-O projeto busca centralizar essas informações, facilitando o acompanhamento das demandas e a organização dos processos.
+O VISAT recebe demandas de diferentes instituições que podem resultar em inspeções, análises e documentos técnicos. O projeto centraliza essas informações, facilitando a comunicação entre os inspetores e o acompanhamento dos processos.
 
 ## 🚀 Objetivo
 
@@ -36,7 +34,7 @@ Desenvolver uma solução que permita:
 ### 📎 Gestão de Documentos e Inspeções
 
 - Anexação de documentos
-- Registro do relatório de inspeção
+- Registro de inspeções e relatórios
 
 ### 🔎 Busca e Filtros
 
@@ -66,9 +64,6 @@ Desenvolver uma solução que permita:
 <p align="center">
   HTML • CSS • JavaScript • Python • MySQL • Git • GitHub
 </p>
-
-> ⚠️ A arquitetura e as tecnologias específicas do projeto poderão ser
-> atualizadas conforme o desenvolvimento da aplicação avançar.
 
 ## 📁 Estrutura do projeto
 
@@ -124,5 +119,3 @@ Projeto desenvolvido por estudantes de Sistemas de Informação.
 ## 📌 Status
 
 🚧 **Em desenvolvimento**
-
-O projeto está sendo desenvolvido e novas funcionalidades serão adicionadas conforme as etapas do projeto avançarem.
