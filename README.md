@@ -68,6 +68,12 @@ O protótipo do VISAT apresenta a proposta visual do sistema e permite visualiza
   </a>
 </p>
 
+<p align="center">
+  <a href="https://youtube.com/shorts/jCpbPQLyhu8?feature=share">
+    <b>🎬 Assistir ao vídeo de demonstração no YouTube</b>
+  </a>
+</p>
+
 ## 📐 Diagramas
 
 Os diagramas de atividades representam os fluxos das histórias de usuário do VISAT, detalhando as ações, decisões e responsabilidades envolvidas em cada funcionalidade.
