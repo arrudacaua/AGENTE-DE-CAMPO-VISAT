@@ -54,6 +54,29 @@ Desenvolver uma solução que permita:
 - Validação e vinculação de processo SEI
 - Entrada de demandas externas pelo SEI
 
+## 🎨 Protótipo
+
+O protótipo do VISAT apresenta a proposta visual do sistema e permite visualizar a navegação entre as principais funcionalidades.
+
+<p align="center">
+  <img src="docs/prototipo.png" alt="Protótipo do sistema VISAT" width="500">
+</p>
+
+<p align="center">
+  <a href="https://claude.ai/artifact/SjXbqsXkbAX9fMj9x1Ec2A">
+    <b>🔗 Acessar protótipo completo</b>
+  </a>
+</p>
+
+## 📐 Diagramas
+
+Os diagramas de atividades representam os fluxos das histórias de usuário do VISAT, detalhando as ações, decisões e responsabilidades envolvidas em cada funcionalidade.
+
+<p align="center">
+  <a href="https://claude.ai/artifact/Mb39gmjth4y6PLFV9LAeL5">
+    <b>📁 Acessar todos os diagramas</b>
+  </a>
+</p>
 
 ## 🛠️ Tecnologias
 
