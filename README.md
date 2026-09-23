@@ -59,7 +59,7 @@ Desenvolver uma solução que permita:
 O protótipo do VISAT apresenta a proposta visual do sistema e permite visualizar a navegação entre as principais funcionalidades.
 
 <p align="center">
-  <img src="docs/prototipo.png" alt="Protótipo do sistema VISAT" width="500">
+  <img src="docs/prototipo.png" alt="Protótipo do sistema VISAT" width="250">
 </p>
 
 <p align="center">
