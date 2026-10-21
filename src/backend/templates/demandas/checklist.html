@@ -1,0 +1,16 @@
+{% extends "demandas/base.html" %}
+{% block title %}Checklist #{{ demanda.numero }} | VISAT{% endblock %}
+{% block breadcrumb %}Checklist de fiscalização{% endblock %}
+{% block content %}
+<div class="back-line"><a class="back-link" href="{% url 'detalhe_demanda' demanda.numero %}">← Voltar à demanda #{{ demanda.numero }}</a></div>
+<section class="page-heading"><div><div class="eyebrow">FISCALIZAÇÃO EM CAMPO</div><h1>Checklist<span class="accent-dot">.</span></h1><p>Marque uma resposta por item. Salve antes de sair para continuar depois.</p></div></section>
+<div class="form-shell narrow-shell"><form method="post" class="panel checklist-form" data-checklist-form>{% csrf_token %}{{ form.revisao }}
+<div class="form-section-heading"><div><span class="section-eyebrow">DEMANDA #{{ demanda.numero }} · SEI {{ demanda.processo_sei }}</span><h2>Itens de verificação</h2></div><span class="muted">{{ itens|length }} itens</span></div>
+{% if form.non_field_errors or form.revisao.errors %}<div class="form-errors" role="alert">{{ form.non_field_errors }}{{ form.revisao.errors }}<a href="{% url 'checklist' demanda.numero %}">Reabrir checklist</a></div>{% endif %}
+{% for item, field in respostas %}<fieldset class="check-item"><legend class="check-item-title"><span class="check-item-index">{{ forloop.counter|stringformat:"02d" }}</span>{{ item.item }}</legend>
+{% if not field.value %}<p class="muted pending-answer">Pendente — ainda não respondido</p>{% endif %}
+<div class="choice-row">{% for radio in field %}{% if radio.data.value %}<label class="choice-option {% if radio.data.value == 'nao_conforme' %}choice-option-danger{% endif %}">{{ radio.tag }}<span>{{ radio.choice_label }}</span></label>{% endif %}{% endfor %}</div>
+{% if field.errors %}<div class="field-errors" role="alert">{{ field.errors }}</div>{% endif %}</fieldset>{% endfor %}
+<p class="save-state" data-save-state role="status">{% if form.is_bound %}As alterações deste envio não foram salvas. Confira os erros acima.{% else %}As respostas exibidas estão salvas.{% endif %}</p>
+<div class="form-actions"><a class="btn btn-secondary" href="{% url 'detalhe_demanda' demanda.numero %}">Voltar à demanda</a><button class="btn btn-primary" type="submit">Salvar checklist</button></div></form></div>
+{% endblock %}
