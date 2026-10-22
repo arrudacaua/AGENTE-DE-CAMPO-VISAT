@@ -148,3 +148,14 @@ Projeto desenvolvido por estudantes de Sistemas de Informação.
 ## 📌 Status
 
 🚧 **Em desenvolvimento**
+
+## 📦 Entrega 03 — Sprint 01
+
+O projeto VISAT continua em desenvolvimento. Para consultar as implementações, os testes automatizados e as evidências produzidas nesta etapa, acesse:
+
+- **[Branch de implementação e testes — `feature/backend-django-original`](https://github.com/arrudacaua/AGENTE-DE-CAMPO-VISAT/tree/feature/backend-django-original)**
+- **[Documentação da Entrega 03 — qualidade e colaboração](https://github.com/arrudacaua/AGENTE-DE-CAMPO-VISAT/blob/feature/backend-django-original/docs/ENTREGA_03_QUALIDADE_COLABORACAO.md)**
+- **[Branch de planejamento da Sprint 01 — `sprint-01-implementacao-django`](https://github.com/arrudacaua/AGENTE-DE-CAMPO-VISAT/tree/sprint-01-implementacao-django)**
+- **[Quadro Trello — histórias de usuário e evidências em vídeo](https://trello.com/b/er7tMowp/visat)**
+
+> Esta entrega representa o progresso da Sprint 01, não a versão final do sistema. As próximas sprints e correções continuarão sendo desenvolvidas em branches próprias.
