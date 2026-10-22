@@ -47,7 +47,7 @@ jobs:
       - name: Criar banco isolado e usuarios ficticios
         run: |
           python manage.py migrate --noinput
-          python ../../scripts/entrega03/preparar_demo.py
+          PYTHONPATH=. python ../../scripts/entrega03/preparar_demo.py
       - name: Iniciar Django
         run: |
           python manage.py runserver 127.0.0.1:8000 --noreload > ../../servidor.log 2>&1 &
@@ -71,6 +71,6 @@ jobs:
         with:
           name: screencasts-e-capturas-visat
           path: |
-            evidencias-entrega03/
+            src/backend/evidencias-entrega03/
             servidor.log
           retention-days: 30
