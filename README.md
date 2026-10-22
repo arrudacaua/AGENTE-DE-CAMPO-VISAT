@@ -148,3 +148,33 @@ Projeto desenvolvido por estudantes de Sistemas de Informação.
 ## 📌 Status
 
 🚧 **Em desenvolvimento**
+
+
+## 🧪 Entrega 03 — Sprint 01: qualidade, testes e colaboração
+
+**Itens 3 e 4 da avaliação.** A documentação detalhada, o roteiro de gravação, o controle de evidências e o quadro de programação em pares estão em [Qualidade e colaboração — Entrega 03](docs/ENTREGA_03_QUALIDADE_COLABORACAO.md).
+
+### Testes do sistema
+
+- **17 testes automatizados Django** existentes em `src/backend/demandas/tests.py`; execução local aprovada em 21/10/2026, conforme validação da equipe.
+- Demonstrações locais já realizadas: login da gerência e fiscal, cadastro/atribuição da demanda #001 e consulta pelo fiscal.
+- **Aguardando evidência de execução no navegador:** detalhes no perfil fiscal (US03), início/retomada (US04) e checklist (US05).
+- [Acompanhamento de evidências e validação — issue #2](https://github.com/arrudacaua/AGENTE-DE-CAMPO-VISAT/issues/2). Bugs confirmados devem ter issues próprias.
+
+### Evidências da Sprint 01
+
+| História | Screencast da funcionalidade | Vídeo de testes no cartão |
+| --- | --- | --- |
+| US01 — Login | A anexar | A anexar |
+| US02 — Minhas demandas | A anexar | A anexar |
+| US03 — Detalhes | A anexar | A anexar |
+| US04 — Iniciar fiscalização | A anexar | A anexar |
+| US05 — Checklist | A anexar | A anexar |
+
+**Prints:** [Board](docs/board.png) · [Backlog](docs/backlog.png) · [Trello da equipe](https://trello.com/b/er7tMowp/visat). A equipe deve confirmar que os prints correspondem à Sprint 01 atual e substituí-los se necessário.
+
+### Programação em pares
+
+**Registro a completar pela equipe com informações reais.** Identificar os dois participantes de cada par, data, história implementada, papel de driver/navigator, resultado e commit/PR que comprove a contribuição. O [formulário de registro](docs/ENTREGA_03_QUALIDADE_COLABORACAO.md#programação-em-pares) já está preparado.
+
+> A ausência de vídeo, print atualizado ou relato confirmado é marcada como pendente, não como atividade concluída.
