@@ -156,20 +156,23 @@ Projeto desenvolvido por estudantes de Sistemas de Informação.
 
 ### Testes do sistema
 
+- **[Pasta de evidências dos testes — docs/testes](docs/testes/README.md)**, incluindo [resultado dos 17 testes](docs/testes/resultado-testes.txt).
+- **[Execução aprovada dos testes e screencasts no GitHub Actions](https://github.com/arrudacaua/AGENTE-DE-CAMPO-VISAT/actions/runs/39700225004)**. Na seção **Artifacts**, baixar `resultado-testes-django` e `screencasts-e-capturas-visat`.
+
 - **17 testes automatizados Django** existentes em `src/backend/demandas/tests.py`; execução local aprovada em 21/10/2026, conforme validação da equipe.
 - Demonstrações locais já realizadas: login da gerência e fiscal, cadastro/atribuição da demanda #001 e consulta pelo fiscal.
-- **Aguardando evidência de execução no navegador:** detalhes no perfil fiscal (US03), início/retomada (US04) e checklist (US05).
+- **Evidência automatizada no navegador aprovada:** detalhes no perfil fiscal (US03), início/retomada (US04) e checklist (US05), com vídeos disponíveis nos Artifacts. Ainda é necessário anexá-los aos cartões do Trello.
 - [Acompanhamento de evidências e validação — issue #2](https://github.com/arrudacaua/AGENTE-DE-CAMPO-VISAT/issues/2). Bugs confirmados devem ter issues próprias.
 
 ### Evidências da Sprint 01
 
 | História | Screencast da funcionalidade | Vídeo de testes no cartão |
 | --- | --- | --- |
-| US01 — Login | A anexar | A anexar |
-| US02 — Minhas demandas | A anexar | A anexar |
-| US03 — Detalhes | A anexar | A anexar |
-| US04 — Iniciar fiscalização | A anexar | A anexar |
-| US05 — Checklist | A anexar | A anexar |
+| US01 — Login | [Vídeo automatizado — artifact](https://github.com/arrudacaua/AGENTE-DE-CAMPO-VISAT/actions/runs/39700225004#artifacts) | A anexar no Trello |
+| US02 — Minhas demandas | [Vídeo do fluxo fiscal — artifact](https://github.com/arrudacaua/AGENTE-DE-CAMPO-VISAT/actions/runs/39700225004#artifacts) | A anexar no Trello |
+| US03 — Detalhes | [Vídeo do fluxo fiscal — artifact](https://github.com/arrudacaua/AGENTE-DE-CAMPO-VISAT/actions/runs/39700225004#artifacts) | A anexar no Trello |
+| US04 — Iniciar fiscalização | [Vídeo do fluxo fiscal — artifact](https://github.com/arrudacaua/AGENTE-DE-CAMPO-VISAT/actions/runs/39700225004#artifacts) | A anexar no Trello |
+| US05 — Checklist | [Vídeo do fluxo fiscal — artifact](https://github.com/arrudacaua/AGENTE-DE-CAMPO-VISAT/actions/runs/39700225004#artifacts) | A anexar no Trello |
 
 **Prints:** [Board](docs/board.png) · [Backlog](docs/backlog.png) · [Trello da equipe](https://trello.com/b/er7tMowp/visat). A equipe deve confirmar que os prints correspondem à Sprint 01 atual e substituí-los se necessário.
 
