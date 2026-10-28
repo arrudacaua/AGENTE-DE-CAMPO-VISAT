@@ -149,7 +149,6 @@ Projeto desenvolvido por estudantes de Sistemas de Informação.
 
 🚧 **Em desenvolvimento**
 
-
 ## 🧪 Entrega 03 — Sprint 01: qualidade, testes e colaboração
 
 **Itens 3 e 4 da avaliação.** A documentação detalhada, o roteiro de gravação, o controle de evidências e o quadro de programação em pares estão em [Qualidade e colaboração — Entrega 03](docs/ENTREGA_03_QUALIDADE_COLABORACAO.md).
@@ -174,6 +173,8 @@ Para facilitar a consulta, seguem os links do projeto:
 - [Acompanhamento de evidências e validação — issue #2](https://github.com/arrudacaua/AGENTE-DE-CAMPO-VISAT/issues/2). Bugs confirmados devem ter issues próprias.
 
 ### Evidências da Sprint 01
+
+### 🎬 Screencasts e evidências por história de usuário
 
 | História de usuário | Cartão no Trello | Evidência anexada | Situação do screencast |
 | --- | --- | --- | --- |
