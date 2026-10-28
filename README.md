@@ -154,6 +154,15 @@ Projeto desenvolvido por estudantes de Sistemas de Informação.
 
 **Itens 3 e 4 da avaliação.** A documentação detalhada, o roteiro de gravação, o controle de evidências e o quadro de programação em pares estão em [Qualidade e colaboração — Entrega 03](docs/ENTREGA_03_QUALIDADE_COLABORACAO.md).
 
+Para facilitar a consulta, seguem os links do projeto:
+
+- **[Branch de implementação e testes — `feature/backend-django-original`](https://github.com/arrudacaua/AGENTE-DE-CAMPO-VISAT/tree/feature/backend-django-original)**
+- **[Documentação da Entrega 03](docs/ENTREGA_03_QUALIDADE_COLABORACAO.md)**
+- **[Branch de planejamento da Sprint 01 — `sprint-01-implementacao-django`](https://github.com/arrudacaua/AGENTE-DE-CAMPO-VISAT/tree/sprint-01-implementacao-django)**
+- **[Quadro Trello — histórias de usuário e evidências](https://trello.com/b/er7tMowp/visat)**
+
+> Esta entrega representa o progresso da Sprint 01, não a versão final do sistema. As próximas sprints e correções continuarão sendo desenvolvidas em branches próprias.
+
 ### Testes do sistema
 
 - **[Pasta de evidências dos testes — docs/testes](docs/testes/README.md)**, incluindo [resultado dos 17 testes](docs/testes/resultado-testes.txt).
