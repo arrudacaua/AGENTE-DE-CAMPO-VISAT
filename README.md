@@ -164,10 +164,10 @@ O projeto VISAT continua em desenvolvimento. Para consultar as implementações,
 
 | História de usuário | Cartão no Trello | Evidência anexada | Situação do screencast |
 | --- | --- | --- | --- |
-| US01 — Acessar o sistema por perfil | [Abrir cartão](https://trello.com/c/GHjDK2CQ) | [Assistir ao screencast](https://trello.com/c/GHjDK2CQ/28-us01-acessar-o-sistema-por-perfil) | Vídeo anexado |
-| US02 — Consultar minhas Demandas | [Abrir cartão](https://trello.com/c/BJRpvGqc) | [Assistir ao screencast](https://trello.com/c/BJRpvGqc/29-us02-consultar-minhas-demandas) | Vídeo anexado |
-| US03 — Visualizar detalhe e localização da Demanda | [Abrir cartão](https://trello.com/c/DHJOn8dJ) | [Assistir ao screencast](https://trello.com/c/DHJOn8dJ/31-us03-visualizar-detalhe-e-localização-da-demanda) | Vídeo anexado |
-| US04 — Iniciar e retomar a fiscalização | [Abrir cartão](https://trello.com/c/fK9u3TsS) | [Assistir ao screencast](https://trello.com/c/fK9u3TsS/30-us04-iniciar-e-retomar-a-fiscalização) | Vídeo anexado |
+| US01 — Acessar o sistema por perfil | [Abrir cartão](https://trello.com/c/GHjDK2CQ) | [Assistir ao screencast](https://trello.com/1/cards/6a98788872c0c4640e0847fc/attachments/6ae2179f645fbe68e6a875ea/download/US01-screencast-acesso-por-perfil.mp4) | Vídeo anexado |
+| US02 — Consultar minhas Demandas | [Abrir cartão](https://trello.com/c/BJRpvGqc) | [Assistir ao screencast](https://trello.com/1/cards/6a987967894b709a7037b01a/attachments/6ae2321b223dea3609963afa/download/US02-screencast-minhas-demandas.mp4) | Vídeo anexado |
+| US03 — Visualizar detalhe e localização da Demanda | [Abrir cartão](https://trello.com/c/DHJOn8dJ) | [Assistir ao screencast](https://trello.com/1/cards/6a987ac04aa5675a96fc2735/attachments/6ae237768c059025a5c2288f/download/US03-screencast-detalhes-demanda_(1).mp4) | Vídeo anexado |
+| US04 — Iniciar e retomar a fiscalização | [Abrir cartão](https://trello.com/c/fK9u3TsS) | [Assistir ao screencast](https://trello.com/1/cards/6a987a34503f1d24f1baf08d/attachments/6adbba0f3283a3cf57c47913/download/Video_Project_6.mp4) | Vídeo anexado |
 | US05 — Preencher checklist de fiscalização | [Abrir cartão](https://trello.com/c/1wPxs63k) | [Assistir ao screencast](https://trello.com/1/cards/6a987cfb78b897716ce8a72e/attachments/6ad9679f0e2fbf663edec19c/download/US05-screencast-checklist-inspecao.mp4.mp4) | Vídeo anexado |
 
 > **Acesso às evidências:** o quadro Trello está configurado como **privado** no arquivo exportado. O professor precisa ter permissão de acesso aos cartões e anexos. O arquivo exportado registra vídeos para US01 e US05; para US02–US04, registra capturas de tela, não screencasts anexados aos cartões. Os vídeos automatizados do GitHub Actions permanecem disponíveis separadamente, conforme a retenção dos artifacts.
