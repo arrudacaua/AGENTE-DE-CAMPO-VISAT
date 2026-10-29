@@ -1,0 +1,33 @@
+VISAT — Entrega 03 / Sprint 01
+Resultado dos testes automatizados Django
+Fonte: GitHub Actions, execução 39700225004 (22/10/2026 UTC)
+Execução: https://github.com/arrudacaua/AGENTE-DE-CAMPO-VISAT/actions/runs/39700225004
+Arquivo original completo: artifact 'resultado-testes-django' na execução acima.
+Comando: python manage.py test demandas --verbosity 2
+
+Testes executados:
+- test_aba_antiga_nao_sobrescreve: ok
+- test_acesso_outro_fiscal_e_anonimo: ok
+- test_cadastro_status_forjado_e_fiscais_validos: ok
+- test_concluida_bloqueia_posts_e_homologacao: ok
+- test_conclusao_exige_seis_respostas_e_confirmacao: ok
+- test_detalhe_completo_sem_fiscal: ok
+- test_iniciar_post_csrf_retomar_sem_duplicar: ok
+- test_inicio_contagem_prazo_e_isolamento: ok
+- test_invalido_estrangeiro_e_multiplas_respostas_atomico: ok
+- test_mapa_coordenadas_reais_inclui_zero: ok
+- test_nao_edita_antes_de_iniciar: ok
+- test_pesquisa_e_paginacao_com_mais_de_oito: ok
+- test_resposta_omitida_preserva: ok
+- test_salvar_alterar_persistir_checklist: ok
+- test_sem_demandas: ok
+- test_validacao_localizacao: ok
+- test_preserva_registros_e_completa_itens_sem_duplicar: ok
+
+Ran 17 tests in 1.383s
+OK
+System check identified no issues (0 silenced).
+
+O job 'screencasts' também foi concluído com sucesso.
+Videos e capturas: artifact 'screencasts-e-capturas-visat' na mesma execução.
+Este documento é um resumo fiel dos resultados; o log completo está no artifact e na execução GitHub Actions.

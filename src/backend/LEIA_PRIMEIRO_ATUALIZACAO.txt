@@ -1,0 +1,86 @@
+VISAT — ATUALIZAÇÃO US02 A US05
+
+Este pacote contém o projeto atualizado, sem banco de dados e sem .venv.
+Não apague sua pasta atual. Não crie outro usuário administrador.
+
+1. PARE O SERVIDOR
+No terminal que está rodando o VISAT, pressione Ctrl+C.
+
+2. FAÇA UM BACKUP
+Com o servidor parado, copie sua pasta VISAT_Agente_de_Campo inteira para
+outro local. Guarde especialmente db.sqlite3. Para voltar à versão anterior,
+restaure código e banco desse mesmo backup juntos, com o servidor parado.
+
+3. COPIE A ATUALIZAÇÃO
+Extraia este ZIP em uma pasta separada.
+Abra a pasta VISAT_Agente_de_Campo que veio no ZIP.
+Copie TODO O CONTEÚDO dela para DENTRO da sua pasta atual:
+C:\Users\valen\OneDrive\Desktop\VISAT_Agente_de_Campo_Sistema_Completo\VISAT_Agente_de_Campo
+
+Aceite substituir os arquivos de código quando o Windows perguntar.
+Não coloque uma pasta VISAT_Agente_de_Campo dentro de outra.
+O manage.py novo deve ficar ao lado do seu db.sqlite3 e da sua .venv.
+Como o ZIP não contém db.sqlite3 nem .venv, eles serão preservados.
+
+4. APLIQUE A ATUALIZAÇÃO
+Na barra de endereço da pasta atual, digite cmd e aperte Enter.
+Execute um comando por vez; se algum falhar, pare e copie a mensagem de erro.
+
+.venv\Scripts\python.exe -m pip install -r requirements.txt
+
+.venv\Scripts\python.exe manage.py migrate
+
+.venv\Scripts\python.exe manage.py check
+
+5. INICIE
+.venv\Scripts\python.exe manage.py runserver
+
+Abra http://127.0.0.1:8000 e use seu usuário e senha atuais.
+Use Ctrl+F5 no navegador para atualizar os estilos e scripts.
+Mantenha o terminal aberto enquanto usa o sistema.
+
+PARA TESTAR COMO FISCAL
+Seu superusuário é gerência. Para testar o fluxo do fiscal:
+- Entre em http://127.0.0.1:8000/admin/ com seu administrador.
+- Em Usuários, adicione uma conta de teste com senha própria.
+- Deixe a conta ativa, SEM marcar equipe (staff) ou superusuário e SEM grupo Gerencia.
+- Pelo painel da gerência, cadastre uma demanda e atribua essa conta como fiscal.
+- Use uma janela anônima para entrar com a conta do fiscal.
+- Inicie a fiscalização, responda alguns itens e clique em Salvar checklist.
+- Volte à demanda e use Continuar Fiscalização para conferir as respostas salvas.
+- Responda os seis itens, salve e volte à demanda para concluir e confirmar a revisão.
+- Volte à gerência e homologue. O fiscal verá que a fiscalização foi homologada.
+
+OS E LOCALIZAÇÃO
+- Número da OS é um campo separado e opcional; não é inventado nem copiado do SEI.
+- Demandas antigas mostram OS não informada até o preenchimento pela gerência no admin.
+- Latitude e longitude são do LOCAL DA INSPEÇÃO, não da posição do fiscal.
+- Preencha as duas coordenadas juntas no cadastro ou em Editar endereço e coordenadas.
+- Use valores reais; latitude de -90 a 90 e longitude de -180 a 180.
+- O mapa do OpenStreetMap precisa de internet. Sem coordenadas, há busca pelo endereço.
+- Clicar em Ampliar mapa abre a visualização maior com endereço e coordenadas.
+- Localização de uma fiscalização concluída fica bloqueada para edição.
+
+BUSCA E CHECKLIST
+- Busca e filtro agora usam o botão Filtrar e consultam todo o conjunto permitido.
+- A lista tem paginação de 20 demandas. Indicadores não mudam por causa do filtro.
+- Demandas do fiscal são ordenadas pelo prazo; gerência vê cadastros mais recentes.
+- Respostas são salvas ao clicar em Salvar checklist, não automaticamente.
+- Se outra aba salvar antes, o sistema pede para reabrir o checklist; não sobrescreve.
+- Uma opção ainda não respondida aparece como Pendente, sem terceira resposta selecionável.
+
+TESTES (OPCIONAL NA SUA MÁQUINA)
+.venv\Scripts\python.exe manage.py test demandas
+Os testes usam um banco temporário próprio. Não precisam apagar seu banco.
+
+LIMITAÇÕES
+- 17 testes automatizados passaram com Django 5.2.18 e Python 3.12.14 no ambiente de entrega.
+- Atualização também aplicada e comparada em uma cópia do banco original enviado.
+- O executável Python do Windows não foi testado neste ambiente Linux.
+- Não foi possível validar visualmente em navegador desktop/mobile nesta execução:
+  o download do navegador local falhou e o navegador remoto não alcançou o servidor.
+- Templates e fluxos HTTP foram exercitados pelos testes do Django.
+- Carregamento real dos mapas externos e comportamento visual do diálogo precisam
+  de conferência no seu navegador; existe alternativa por endereço se o mapa falhar.
+- Este pacote não inclui .exe, IA, upload real de mídia ou integração real com SEI.
+- Configurações continuam voltadas ao desenvolvimento local, não à publicação na internet.

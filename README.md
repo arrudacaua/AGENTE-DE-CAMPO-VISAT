@@ -149,16 +149,30 @@ Projeto desenvolvido por estudantes de Sistemas de Informação.
 
 🚧 **Em desenvolvimento**
 
-## 📦 Entrega 03 — Sprint 01
+## 🧪 Entrega 03 — Sprint 01: qualidade, testes e colaboração
 
-O projeto VISAT continua em desenvolvimento. Para consultar as implementações, os testes automatizados e as evidências produzidas nesta etapa, acesse:
+**Itens 3 e 4 da avaliação.** A documentação detalhada, o roteiro de gravação, o controle de evidências e o quadro de programação em pares estão em [Qualidade e colaboração — Entrega 03](docs/ENTREGA_03_QUALIDADE_COLABORACAO.md).
+
+Para facilitar a consulta, seguem os links do projeto:
 
 - **[Branch de implementação e testes — `feature/backend-django-original`](https://github.com/arrudacaua/AGENTE-DE-CAMPO-VISAT/tree/feature/backend-django-original)**
-- **[Documentação da Entrega 03 — qualidade e colaboração](https://github.com/arrudacaua/AGENTE-DE-CAMPO-VISAT/blob/feature/backend-django-original/docs/ENTREGA_03_QUALIDADE_COLABORACAO.md)**
+- **[Documentação da Entrega 03](docs/ENTREGA_03_QUALIDADE_COLABORACAO.md)**
 - **[Branch de planejamento da Sprint 01 — `sprint-01-implementacao-django`](https://github.com/arrudacaua/AGENTE-DE-CAMPO-VISAT/tree/sprint-01-implementacao-django)**
-- **[Quadro Trello — histórias de usuário e evidências em vídeo](https://trello.com/b/er7tMowp/visat)**
+- **[Quadro Trello — histórias de usuário e evidências](https://trello.com/b/er7tMowp/visat)**
 
 > Esta entrega representa o progresso da Sprint 01, não a versão final do sistema. As próximas sprints e correções continuarão sendo desenvolvidas em branches próprias.
+
+### Testes do sistema
+
+- **[Pasta de evidências dos testes — docs/testes](docs/testes/README.md)**, incluindo [resultado dos 17 testes](docs/testes/resultado-testes.txt).
+- **[Execução aprovada dos testes e screencasts no GitHub Actions](https://github.com/arrudacaua/AGENTE-DE-CAMPO-VISAT/actions/runs/39700225004)**. Na seção **Artifacts**, baixar `resultado-testes-django` e `screencasts-e-capturas-visat`.
+
+- **17 testes automatizados Django** existentes em `src/backend/demandas/tests.py`; execução local aprovada em 21/10/2026, conforme validação da equipe.
+- Demonstrações locais já realizadas: login da gerência e fiscal, cadastro/atribuição da demanda #001 e consulta pelo fiscal.
+- **Evidência automatizada no navegador aprovada:** detalhes no perfil fiscal (US03), início/retomada (US04) e checklist (US05), com vídeos disponíveis nos Artifacts. No Trello exportado, há vídeos anexados aos cartões US01 e US05 e capturas de tela nos cartões US02, US03 e US04.
+- [Acompanhamento de evidências e validação — issue #2](https://github.com/arrudacaua/AGENTE-DE-CAMPO-VISAT/issues/2). Bugs confirmados devem ter issues próprias.
+
+### Evidências da Sprint 01
 
 ### 🎬 Screencasts e evidências por história de usuário
 
@@ -171,3 +185,11 @@ O projeto VISAT continua em desenvolvimento. Para consultar as implementações,
 | US05 — Preencher checklist de fiscalização | [Abrir cartão](https://trello.com/c/1wPxs63k) | [Assistir ao screencast](https://trello.com/1/cards/6a987cfb78b897716ce8a72e/attachments/6ad9679f0e2fbf663edec19c/download/US05-screencast-checklist-inspecao.mp4.mp4) | Vídeo anexado |
 
 > **Acesso às evidências:** o quadro Trello está configurado como **privado** no arquivo exportado. O professor precisa ter permissão de acesso aos cartões e anexos. O arquivo exportado registra vídeos para US01 e US05; para US02–US04, registra capturas de tela, não screencasts anexados aos cartões. Os vídeos automatizados do GitHub Actions permanecem disponíveis separadamente, conforme a retenção dos artifacts.
+
+**Prints:** [Board](docs/board.png) · [Backlog](docs/backlog.png) · [Trello da equipe](https://trello.com/b/er7tMowp/visat). A equipe deve confirmar que os prints correspondem à Sprint 01 atual e substituí-los se necessário.
+
+### Programação em pares
+
+**Registro a completar pela equipe com informações reais.** Identificar os dois participantes de cada par, data, história implementada, papel de driver/navigator, resultado e commit/PR que comprove a contribuição. O [formulário de registro](docs/ENTREGA_03_QUALIDADE_COLABORACAO.md#programação-em-pares) já está preparado.
+
+> A ausência de vídeo, print atualizado ou relato confirmado é marcada como pendente, não como atividade concluída.

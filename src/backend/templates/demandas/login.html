@@ -1,0 +1,33 @@
+{% extends "demandas/base.html" %}
+{% block title %}Acessar sistema | VISAT{% endblock %}
+{% block guest_content %}
+<section class="login-layout" aria-labelledby="login-heading">
+  <div class="login-story">
+    <div class="eyebrow"><span class="eyebrow-line"></span> VIGILÂNCIA EM SAÚDE DO TRABALHADOR</div>
+    <h1>Do campo <span>ao processo.</span><br> Tudo conectado.</h1>
+    <p>Uma nova forma de organizar inspeções, acompanhar demandas e transformar informações em ações.</p>
+    <div class="login-preview" aria-hidden="true">
+      <div class="preview-head"><span class="preview-symbol"><svg class="icon"><use href="#i-grid"></use></svg></span><span>Visão geral</span><span class="preview-dot"></span></div>
+      <div class="preview-caption">ACOMPANHAMENTO OPERACIONAL</div>
+      <div class="preview-metrics"><div><small>Em aberto</small><strong>01</strong></div><div><small>Em andamento</small><strong>02</strong></div><div><small>Concluídas</small><strong>02</strong></div></div>
+      <div class="preview-bars"><span style="--bar-size:76%"></span><span style="--bar-size:48%"></span><span style="--bar-size:89%"></span></div>
+    </div>
+    <div class="login-features"><span><svg class="icon"><use href="#i-shield"></use></svg> Acesso por perfil</span><span><svg class="icon"><use href="#i-clipboard"></use></svg> Gestão de demandas</span></div>
+  </div>
+  <div class="login-card-wrap">
+    <div class="login-card">
+      <div class="login-icon"><svg class="icon"><use href="#i-shield"></use></svg></div>
+      <div class="eyebrow login-eyebrow">BEM-VINDO AO VISAT</div>
+      <h2 id="login-heading">Acesse sua conta<span class="accent-dot">.</span></h2>
+      <p class="login-description">Entre com suas credenciais para acessar seu espaço de trabalho.</p>
+      <form method="post" class="stack-form login-form">
+        {% csrf_token %}
+        <div class="field-group"><label for="username">Usuário ou e-mail</label><div class="input-with-icon"><svg class="icon"><use href="#i-user"></use></svg><input id="username" type="text" name="username" autocomplete="username" placeholder="Seu usuário institucional" required autofocus></div></div>
+        <div class="field-group"><label for="password">Senha</label><div class="input-with-icon"><svg class="icon"><use href="#i-shield"></use></svg><input id="password" type="password" name="password" autocomplete="current-password" placeholder="Digite sua senha" required><button class="password-toggle" type="button" data-toggle-password aria-label="Mostrar senha"><svg class="icon"><use href="#i-eye"></use></svg></button></div></div>
+        <button class="btn btn-primary btn-full login-submit" type="submit">Entrar no sistema <svg class="icon"><use href="#i-arrow"></use></svg></button>
+      </form>
+      <div class="login-note"><svg class="icon"><use href="#i-info"></use></svg><span>Contas e permissões são gerenciadas pela equipe responsável.</span></div>
+    </div>
+  </div>
+</section>
+{% endblock %}
