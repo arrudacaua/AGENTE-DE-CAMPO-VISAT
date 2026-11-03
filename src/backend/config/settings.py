@@ -1,9 +1,34 @@
+import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = "chave-de-desenvolvimento-troque-antes-de-publicar"
-DEBUG = True
-ALLOWED_HOSTS = []
+
+load_dotenv(BASE_DIR / ".env")
+
+SECRET_KEY = os.environ.get(
+    "DJANGO_SECRET_KEY",
+    "chave-insegura-apenas-para-desenvolvimento-local"
+)
+
+DEBUG = os.environ.get("DJANGO_DEBUG", "True").lower() == "true"
+
+ALLOWED_HOSTS = os.environ.get(
+    "DJANGO_ALLOWED_HOSTS",
+    "localhost,127.0.0.1"
+).split(",")
+
+if not DEBUG:
+    from django.core.exceptions import ImproperlyConfigured
+
+    if not os.environ.get("DJANGO_SECRET_KEY"):
+        raise ImproperlyConfigured(
+            "DJANGO_SECRET_KEY precisa ser configurada."
+        )
+
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -48,7 +73,20 @@ DATABASES = {
     }
 }
 
-AUTH_PASSWORD_VALIDATORS = []
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+    },
+]
 LANGUAGE_CODE = "pt-br"
 TIME_ZONE = "America/Recife"
 USE_I18N = True
