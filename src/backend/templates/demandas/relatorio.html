@@ -1,0 +1,9 @@
+{% extends "demandas/base.html" %}
+{% block title %}Relatório #{{ demanda.numero }} | VISAT{% endblock %}
+{% block breadcrumb %}Relatório técnico{% endblock %}
+{% block content %}
+<div class="back-line no-print"><a class="back-link" href="{% url 'detalhe_demanda' demanda.numero %}"><svg class="icon"><use href="#i-back"></use></svg> Voltar à demanda</a></div>
+<section class="page-heading no-print"><div><div class="eyebrow"><span class="eyebrow-line"></span> DOCUMENTAÇÃO</div><h1>Relatório técnico<span class="accent-dot">.</span></h1><p>Prévia do documento para revisão e impressão.</p></div><button class="btn btn-primary" type="button" onclick="window.print()"><svg class="icon"><use href="#i-download"></use></svg> Imprimir / salvar PDF</button></section>
+<div class="report-warning no-print"><svg class="icon"><use href="#i-info"></use></svg><span>Documento demonstrativo gerado a partir dos registros. Não utiliza IA, não possui assinatura digital e não foi enviado ao SEI.</span></div>
+<article class="paper-report"><header class="report-letterhead"><div class="brand-emblem"><svg class="icon"><use href="#i-eye"></use></svg></div><div><strong>VISAT · AGENTE DE CAMPO</strong><small>Relatório de fiscalização · Demonstração</small></div><span>#{% if demanda.numero %}{{ demanda.numero|stringformat:"03d" }}{% endif %}</span></header><h2>Relatório técnico sanitário</h2><p class="report-subtitle">Rascunho para conferência da gerência</p><div class="report-body">{{ demanda.relatorio|linebreaksbr }}</div><footer class="report-footer">Documento demonstrativo. Revisão por servidor competente obrigatória antes de qualquer uso oficial.</footer></article>
+{% endblock %}
