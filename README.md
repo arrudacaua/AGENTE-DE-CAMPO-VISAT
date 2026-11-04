@@ -163,6 +163,11 @@ O projeto VISAT continua em desenvolvimento. Para consultar as implementações,
 
 > Esta entrega representa o progresso da Sprint 01, não a versão final do sistema. As próximas sprints e correções continuarão sendo desenvolvidas em branches próprias.
 
+## 📦 Entrega 04 — Sprint 02
+<p align="center">
+  <img src="docs/sprint02.png" width="250">
+</p>
+
 ### 🎬 Screencasts e evidências por história de usuário
 
 | História de usuário | Cartão no Trello | Evidência anexada | Situação do screencast |
