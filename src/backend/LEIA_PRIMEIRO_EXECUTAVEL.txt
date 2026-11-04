@@ -1,0 +1,51 @@
+VISAT — INICIALIZADOR WINDOWS
+
+ESTE PACOTE CONTEM O PROJETO E O GERADOR, NAO UM EXE JA COMPILADO.
+A compilação e a interface Windows precisam ser verificadas no Windows.
+
+PARA LUCAS GERAR UMA VEZ
+1. Extraia este ZIP em uma pasta separada. Nao substitua seu banco nem .venv.
+2. Com Python 3.13 instalado, dê dois cliques em GERAR_EXECUTAVEL.bat.
+   A geração precisa de internet. Usa um ambiente separado .venv-build.
+3. Aguarde a mensagem Concluido. A pasta dist será aberta.
+4. Teste dist\Iniciar_VISAT\Iniciar_VISAT.exe no seu Windows.
+5. Envie dist\VISAT_Para_Distribuir.zip para os amigos.
+
+PARA QUEM RECEBER O ZIP GERADO
+1. Extraia tudo em uma pasta; não execute dentro do ZIP.
+2. Abra Iniciar_VISAT.exe. Não precisa Python, Django, VS Code ou terminal.
+3. Mantenha a pasta _internal junto do executável.
+4. No primeiro acesso, selecione seu db.sqlite3 existente OU escolha Não
+   para criar banco novo. Banco vazio pede criação do administrador.
+5. O navegador abre automaticamente. A janela mostra a URL e permite reabrir.
+6. Salve seus formulários antes de clicar Encerrar. Fechar só o navegador
+   não encerra o servidor.
+
+SEU BANCO EXISTENTE
+Pare o runserver (Ctrl+C) antes de abrir o inicializador com o mesmo banco.
+Selecione o db.sqlite3 original pela janela. Ele é usado no próprio local;
+não é substituído por um banco do pacote. Migrações pendentes recebem backup
+SQLite consistente em backups_visat, ao lado do banco, antes de serem aplicadas.
+O banco e sua pasta precisam permitir escrita. Não mova o banco após escolher.
+Faça também sua cópia de segurança habitual. Evite uso simultâneo via OneDrive.
+
+INSTALACAO NOVA
+Dados em %LOCALAPPDATA%\VISAT\db.sqlite3 (por usuário do Windows).
+Cada computador tem seus próprios dados. Este pacote não sincroniza PCs.
+Distribuir novamente o programa não inclui nem sobrescreve bancos.
+Se já houver usuários, use as credenciais existentes; não há senha padrão.
+Administrador pode cadastrar fiscais no /admin/.
+
+SUPORTE
+Log: %LOCALAPPDATA%\VISAT\inicializador.log e runtime.log.
+Preferência do banco: %LOCALAPPDATA%\VISAT\inicializador.json.
+Para selecionar outro banco: feche o aplicativo e renomeie apenas esse JSON.
+Nunca apague o db.sqlite3 para resolver um problema de inicialização.
+Porta automática, acesso só via 127.0.0.1. Não publica o sistema na internet.
+O núcleo funciona offline; mapas externos precisam de conexão.
+Executável sem assinatura digital própria. Não desative proteções do Windows.
+
+VALIDACAO
+Testes automatizados do projeto e integração local do servidor executados em
+Linux. Não foi possível executar o .bat, compilar EXE Windows ou testar a janela
+Tkinter graficamente neste ambiente. Teste o pacote gerado antes de distribuir.

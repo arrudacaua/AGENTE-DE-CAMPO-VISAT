@@ -1,0 +1,37 @@
+VISAT LEVE — PARA QUEM JA TEM O PROJETO, PYTHON E DJANGO
+
+Este ZIP contém o inicializador e o gerador. Ainda não contém EXE compilado.
+
+USAR AGORA
+Copie VISAT_Leve.py e ABRIR_VISAT.bat para a pasta que contém manage.py.
+Dê dois cliques em ABRIR_VISAT.bat. Não precisa VS Code nem digitar comandos.
+O inicializador prioriza .venv, venv ou env da pasta do projeto.
+O Python precisa incluir Tkinter (normal na instalação oficial Windows).
+
+GERAR O EXE UMA VEZ NO WINDOWS
+Dê dois cliques em GERAR_EXE_LEVE.bat. Requer Python acessível pelo comando py
+e internet para instalar o empacotador em um ambiente separado.
+Resultado: dist\Iniciar_VISAT_Leve.exe.
+Copie o EXE para a pasta do projeto ou selecione manage.py na primeira abertura.
+Para distribuir, envie esse EXE. O destinatário precisa ter o projeto e seu
+ambiente Python/Django funcionando. O EXE contém apenas o inicializador e seu
+runtime de interface, não empacota Django nem o projeto.
+
+FUNCIONAMENTO
+Abre servidor local numa porta livre e depois o navegador.
+Use Encerrar na janela após salvar os formulários.
+Usa o banco e as configurações do projeto existente.
+Não instala dependências do projeto, não substitui banco e não aplica migrações.
+Se houver migrações pendentes, informa o erro: atualize o projeto normalmente.
+Esta versão usa runserver: destinada à demonstração local, não à publicação.
+Pare outros servidores do mesmo projeto antes de abrir.
+Cada PC mantém seus próprios dados. Mapas externos precisam de internet.
+
+LOG E PREFERENCIA
+%LOCALAPPDATA%\VISAT_Leve\servidor.log
+%LOCALAPPDATA%\VISAT_Leve\projeto.json
+Para mudar projeto, feche e renomeie apenas o JSON.
+
+VALIDACAO
+Código compilado sintaticamente e seleção de ambiente testada em Linux.
+A janela, o BAT e o EXE precisam ser testados no Windows antes de distribuir.

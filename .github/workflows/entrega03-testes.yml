@@ -1,0 +1,76 @@
+name: Entrega 03 - Testes e screencasts
+on:
+  workflow_dispatch:
+  push:
+    branches: [feature/backend-django-original]
+    paths:
+      - 'src/backend/**'
+      - '.github/workflows/entrega03-testes.yml'
+      - 'scripts/entrega03/**'
+permissions:
+  contents: read
+jobs:
+  django-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install -r requirements.txt
+      - name: Verificar configuracao
+        run: python manage.py check
+      - name: Executar testes automatizados
+        run: python manage.py test demandas --verbosity 2 2>&1 | tee ../../resultado-testes.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: resultado-testes-django
+          path: resultado-testes.txt
+  screencasts:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Instalar dependencias
+        run: |
+          python -m pip install -r requirements.txt playwright
+          python -m playwright install --with-deps chromium
+      - name: Criar banco isolado e usuarios ficticios
+        run: |
+          python manage.py migrate --noinput
+          PYTHONPATH=. python ../../scripts/entrega03/preparar_demo.py
+      - name: Iniciar Django
+        run: |
+          python manage.py runserver 127.0.0.1:8000 --noreload > ../../servidor.log 2>&1 &
+          echo $! > ../../django.pid
+          python - <<'PY'
+          import time,urllib.request
+          for attempt in range(40):
+              try:
+                  urllib.request.urlopen('http://127.0.0.1:8000/login/',timeout=2)
+                  print('Django pronto')
+                  break
+              except Exception:
+                  time.sleep(1)
+          else:
+              raise RuntimeError('Servidor Django nao iniciou')
+          PY
+      - name: Gravar navegador e validar historias
+        run: python ../../scripts/entrega03/gravar_testes.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screencasts-e-capturas-visat
+          path: |
+            src/backend/evidencias-entrega03/
+            servidor.log
+          retention-days: 30

@@ -1,0 +1,97 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#090f22">
+  <meta name="description" content="Agente de Campo VISAT — gestão de demandas e acompanhamento de inspeções.">
+  <title>{% block title %}Agente de Campo | VISAT{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'demandas/css/app.css' %}">
+  <script defer src="{% static 'demandas/js/app.js' %}"></script>
+</head>
+<body class="{% if user.is_authenticated %}app-authenticated{% else %}app-guest{% endif %}">
+  <!-- Conjunto local de ícones, sem dependência de CDN ou internet. -->
+  <svg class="icon-defs" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+    <symbol id="i-clipboard" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="18" rx="2"/><path d="M9 4.5V3h6v1.5M9 10h6M9 14h6M9 18h4"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v18h18M7 17v-5M12 17V8M17 17v-9"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M16 3a4 4 0 0 1 0 8M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5m6-6-6 6 6 6"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="m10.3 3.8-8.5 15a1.5 1.5 0 0 0 1.3 2.2h17.8a1.5 1.5 0 0 0 1.3-2.2l-8.5-15a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4m0 4h.01"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 11-8 11S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 10h18"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h8m-8 4h8"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></symbol>
+    <symbol id="i-filter" viewBox="0 0 24 24"><path d="M4 7h16M7 12h10m-7 5h4"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><path d="M3 7h4l2-3h6l2 3h4v13H3Z"/><circle cx="12" cy="13" r="3.5"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 6 3.8 9.3 8 11 4.2-1.7 8-5 8-11V5Z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4m7 4 5 5-5 5m5-5H9"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="m3 3 18 18M10.6 5.1A11 11 0 0 1 12 5c6 0 10 7 10 7a16 16 0 0 1-3.2 3.9M6 6.1C3.5 7.8 2 12 2 12s4 7 10 7c1.8 0 3.3-.5 4.6-1.3M10 10a3 3 0 0 0 4 4"/></symbol>
+    <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="m12 3 1.9 6.1L20 11l-6.1 1.9L12 19l-1.9-6.1L4 11l6.1-1.9ZM19 18l.6 1.5L21 20l-1.4.5L19 22l-.6-1.5L17 20l1.4-.5Z"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6 18 18M18 6 6 18"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10h.01"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 17v4h16v-4"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></symbol>
+    <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h12M9 12h12M9 18h12M4 6h.01M4 12h.01M4 18h.01"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 2 9 5-9 5-9-5 9-5Zm-9 10 9 5 9-5m-18 5 9 5 9-5"/></symbol>
+  </svg>
+
+  {% if user.is_authenticated %}
+  <div class="app-shell">
+    <aside class="sidebar" id="app-sidebar" aria-label="Navegação principal">
+      <a class="brand brand-sidebar" href="{% url 'inicio' %}" aria-label="Agente de Campo VISAT — início">
+        <span class="brand-emblem"><svg class="icon"><use href="#i-eye"></use></svg></span>
+        <span class="brand-copy"><strong>AGENTE DE CAMPO</strong><small>VISAT · Recife</small></span>
+      </a>
+      <div class="sidebar-section-label">WORKSPACE</div>
+      <nav class="sidebar-nav" aria-label="Menu lateral">
+        <a class="nav-link {% if request.resolver_match.url_name == 'inicio' %}active{% endif %}" href="{% url 'inicio' %}"><svg class="icon"><use href="#i-grid"></use></svg><span>Visão geral</span></a>
+        <a class="nav-link {% if request.resolver_match.url_name == 'detalhe_demanda' or request.resolver_match.url_name == 'checklist' or request.resolver_match.url_name == 'adicionar_evidencia' %}active{% endif %}" href="{% url 'inicio' %}#demandas"><svg class="icon"><use href="#i-clipboard"></use></svg><span>Demandas</span></a>
+        {% if gerente %}
+          <a class="nav-link {% if request.resolver_match.url_name == 'criar_demanda' %}active{% endif %}" href="{% url 'criar_demanda' %}"><svg class="icon"><use href="#i-plus"></use></svg><span>Cadastrar demanda</span></a>
+          <a class="nav-link" href="{% url 'inicio' %}#indicadores"><svg class="icon"><use href="#i-chart"></use></svg><span>Indicadores</span></a>
+        {% endif %}
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="sidebar-help"><svg class="icon"><use href="#i-shield"></use></svg><div><strong>Ambiente de testes</strong><span>Protótipo acadêmico · sem integração real com o SEI</span></div></div>
+        <div class="user-panel"><div class="avatar">{{ user.username|slice:':1'|upper }}</div><div class="user-panel-copy"><strong>{{ user.get_full_name|default:user.username|truncatechars:22 }}</strong><span>{% if gerente %}Gerência VISAT{% else %}Fiscal de campo{% endif %}</span></div><a class="icon-button" href="{% url 'logout' %}" title="Sair do sistema" aria-label="Sair do sistema"><svg class="icon"><use href="#i-logout"></use></svg></a></div>
+      </div>
+    </aside>
+    <div class="app-main">
+      <header class="topbar">
+        <div class="topbar-left"><button class="icon-button menu-trigger" type="button" data-toggle-menu aria-expanded="false" aria-controls="app-sidebar" aria-label="Abrir menu"><svg class="icon"><use href="#i-menu"></use></svg></button><div class="topbar-path"><span>VISAT</span><svg class="icon"><use href="#i-chevron"></use></svg><strong>{% block breadcrumb %}Visão geral{% endblock %}</strong></div></div>
+        <div class="topbar-right"><span class="connection-pill"><span class="live-dot"></span> Sistema local</span><span class="topbar-avatar" title="{{ user.username }}">{{ user.username|slice:':1'|upper }}</span></div>
+      </header>
+      <main class="page-content" id="conteudo-principal">
+        {% if messages %}<div class="flash-stack" aria-live="polite">{% for message in messages %}<div class="flash-message {% if message.tags %}flash-{{ message.tags }}{% endif %}"><svg class="icon"><use href="#i-info"></use></svg><span>{{ message }}</span><button type="button" class="flash-close" aria-label="Fechar aviso" data-dismiss><svg class="icon"><use href="#i-close"></use></svg></button></div>{% endfor %}</div>{% endif %}
+        {% block content %}{% endblock %}
+        <footer class="page-footer"><span>VISAT · Agente de Campo</span><span>Ambiente de demonstração · Os dados são locais</span></footer>
+      </main>
+    </div>
+    <nav class="mobile-bottom-nav" aria-label="Navegação no celular">
+      <a href="{% url 'inicio' %}" class="{% if request.resolver_match.url_name == 'inicio' %}active{% endif %}"><svg class="icon"><use href="#i-grid"></use></svg><span>Início</span></a>
+      <a href="{% url 'inicio' %}#demandas" class="{% if request.resolver_match.url_name == 'detalhe_demanda' %}active{% endif %}"><svg class="icon"><use href="#i-clipboard"></use></svg><span>Demandas</span></a>
+      {% if gerente %}<a href="{% url 'criar_demanda' %}" class="{% if request.resolver_match.url_name == 'criar_demanda' %}active{% endif %}"><span class="bottom-add"><svg class="icon"><use href="#i-plus"></use></svg></span><span>Cadastrar</span></a>{% else %}<a href="{% url 'inicio' %}#demandas"><svg class="icon"><use href="#i-list"></use></svg><span>Atividades</span></a>{% endif %}
+      <button type="button" data-toggle-menu aria-label="Abrir mais opções"><svg class="icon"><use href="#i-menu"></use></svg><span>Menu</span></button>
+    </nav>
+    <div class="sidebar-backdrop" data-close-menu></div>
+  </div>
+  {% else %}
+  <div class="guest-shell">
+    <header class="guest-header"><a class="brand" href="{% url 'login' %}"><span class="brand-emblem"><svg class="icon"><use href="#i-eye"></use></svg></span><span class="brand-copy"><strong>AGENTE DE CAMPO</strong><small>VISAT · Recife</small></span></a><span class="guest-header-tag"><span class="live-dot"></span> ACESSO SEGURO</span></header>
+    <main class="guest-main">{% if messages %}<div class="flash-stack" aria-live="polite">{% for message in messages %}<div class="flash-message flash-{{ message.tags|default:'info' }}"><svg class="icon"><use href="#i-info"></use></svg>{{ message }}</div>{% endfor %}</div>{% endif %}{% block guest_content %}{% endblock %}</main>
+    <footer class="guest-footer">Agente de Campo VISAT · Protótipo acadêmico para demonstração</footer>
+  </div>
+  {% endif %}
+</body>
+</html>
