@@ -1,0 +1,19 @@
+PROJETO VISAT COMPLETO + INICIALIZADORES
+
+Para quem já tem Python/Django: ABRIR_VISAT.bat.
+Para gerar o EXE leve no Windows: GERAR_EXE_LEVE.bat.
+Para gerar o pacote que inclui Django: GERAR_EXECUTAVEL.bat.
+Os EXEs ainda precisam ser gerados no Windows.
+
+ATUALIZAR SUA PASTA EXISTENTE
+Pare o servidor e faça uma cópia de segurança da pasta atual.
+Copie o conteúdo desta pasta para a pasta existente que contém manage.py.
+Preserve seu db.sqlite3 e sua .venv: nenhum deles está neste ZIP.
+Caso ainda não tenha aplicado a atualização US02–US05, siga
+LEIA_PRIMEIRO_ATUALIZACAO.txt para instalar dependências e executar migrate.
+Depois dê dois cliques em ABRIR_VISAT.bat.
+
+INSTALAÇÃO NOVA
+Siga o README para preparar Python, ambiente, dependências, migrações e conta.
+O inicializador leve exige esse ambiente preparado.
+Leia LEIA_PRIMEIRO_LEVE.txt ou LEIA_PRIMEIRO_EXECUTAVEL.txt conforme a opção.

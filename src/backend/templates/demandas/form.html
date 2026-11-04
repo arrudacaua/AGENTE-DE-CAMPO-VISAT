@@ -1,0 +1,14 @@
+{% extends "demandas/base.html" %}
+{% block title %}{{ titulo }} | VISAT{% endblock %}
+{% block breadcrumb %}{{ titulo }}{% endblock %}
+{% block content %}
+<div class="back-line"><a class="back-link" href="{% url 'inicio' %}#demandas"><svg class="icon"><use href="#i-back"></use></svg> Voltar às demandas</a></div>
+<section class="page-heading"><div><div class="eyebrow"><span class="eyebrow-line"></span> {% if gerente %}GERÊNCIA VISAT{% else %}FISCAL DE CAMPO{% endif %}</div><h1>{{ titulo }}<span class="accent-dot">.</span></h1><p>{% if localizacao %}Informe o endereço e as coordenadas do local fiscalizado. Latitude e longitude são opcionais e devem ser preenchidas juntas.{% elif cadastro_demanda %}Preencha os dados para cadastrar e encaminhar uma nova demanda ao fiscal responsável.{% else %}Registre as informações relacionadas à fiscalização em andamento.{% endif %}</p></div><span class="page-heading-icon"><svg class="icon"><use href="{% if cadastro_demanda %}#i-plus{% else %}#i-camera{% endif %}"></use></svg></span></section>
+<div class="form-shell"><form method="post" class="panel application-form" novalidate>{% csrf_token %}
+<div class="form-section-heading"><div><span class="section-eyebrow">{% if cadastro_demanda %}DADOS DO PROCESSO{% else %}NOVO REGISTRO{% endif %}</span><h2>Informações {% if cadastro_demanda %}da demanda{% else %}da evidência{% endif %}</h2></div><span class="form-required">* Campos obrigatórios</span></div>
+{% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
+<div class="form-fields {% if cadastro_demanda %}form-fields-grid{% endif %}">{% for field in form %}<div class="field-group {% if field.name == 'descricao' or field.name == 'endereco' %}field-span-2{% endif %}"><label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %}<span class="required-star"> *</span>{% endif %}</label>{{ field }}{% if field.help_text %}<small class="field-help">{{ field.help_text }}</small>{% endif %}{% if field.errors %}<div class="field-errors">{{ field.errors }}</div>{% endif %}</div>{% endfor %}</div>
+{% if not cadastro_demanda and not localizacao %}<div class="fine-print form-notice"><svg class="icon"><use href="#i-info"></use></svg> Este formulário registra uma descrição textual. Upload real de foto, áudio e vídeo ainda não está disponível.</div>{% endif %}
+<div class="form-actions sticky-form-actions"><a class="btn btn-secondary" href="{% if demanda %}{% url 'detalhe_demanda' demanda.numero %}{% else %}{% url 'inicio' %}{% endif %}">Cancelar</a><button class="btn btn-primary" type="submit"><svg class="icon"><use href="#i-check"></use></svg> {% if cadastro_demanda %}Cadastrar demanda{% elif localizacao %}Salvar localização{% else %}Salvar registro{% endif %}</button></div>
+</form></div>
+{% endblock %}
