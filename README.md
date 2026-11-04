@@ -150,6 +150,9 @@ Projeto desenvolvido por estudantes de Sistemas de Informação.
 🚧 **Em desenvolvimento**
 
 ## 📦 Entrega 03 — Sprint 01
+<p align="center">
+  <img src="sprint01.png" width="250">
+</p>
 
 O projeto VISAT continua em desenvolvimento. Para consultar as implementações, os testes automatizados e as evidências produzidas nesta etapa, acesse:
 
