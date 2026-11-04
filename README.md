@@ -150,7 +150,6 @@ Projeto desenvolvido por estudantes de Sistemas de Informação.
 🚧 **Em desenvolvimento**
 
 ## 📦 Entrega 03 — Sprint 01
-![Uploading image.png…]()
 
 O projeto VISAT continua em desenvolvimento. Para consultar as implementações, os testes automatizados e as evidências produzidas nesta etapa, acesse:
 
@@ -175,7 +174,3 @@ O projeto VISAT continua em desenvolvimento. Para consultar as implementações,
 | US15 — Visualizar gráficos e indicadores | [Abrir cartão](https://trello.com/c/1euG3jZO/34-us15-visualizar-gr%C3%A1ficos-e-indicadores) | [Assistir ao screencast](https://trello.com/1/cards/6a987c5cfe56e56bdbb9bacf/attachments/6aea303958e5693f765fd69e/download/Video_Project_18.mp4) | Vídeo anexado |
 | US16 — Homologar fiscalização | [Abrir cartão](https://trello.com/c/1lt7Jh7a/43-us16-homologar-fiscaliza%C3%A7%C3%A3o) | [Assistir ao screencast](https://trello.com/1/cards/6a9889fe5c6eaff97eeb89c3/attachments/6ae9096df0948b6f5398dbd6/download/US013-screencast-acompanhamento-do-andamento-da-fiscalizacao_(1).mp4) | Vídeo anexado |
 | US17 — Vincular relatório ao processo SEI | [Abrir cartão](https://trello.com/c/nPArztwF/54-us17-vincular-relat%C3%B3rio-ao-processo-sei) | [Assistir ao screencast](https://trello.com/1/cards/6ab43d8cbfd633cd1c243298/attachments/6aea1bda227f6b01791a5cfd/download/Video_Project_18.mp4) | Vídeo anexado |
-
-
-### Sprint 01
-
