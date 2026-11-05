@@ -279,7 +279,11 @@ def vincular_sei(request, numero):
         if demanda.relatorio:
             demanda.relatorio_vinculado_sei = True
             demanda.save()
-            messages.success(request, "Vínculo conceitual registrado. Nenhuma integração real com o SEI foi realizada.")
+            messages.success(
+                request,
+                f"Vínculo conceitual registrado ao processo SEI {demanda.processo_sei}. "
+                "Nenhuma integração real com o SEI foi realizada."
+            )
         else:
             messages.error(request, "Gere o relatório antes de registrar o vínculo.")
     return redirect("detalhe_demanda", numero=numero)
