@@ -2,6 +2,7 @@ from urllib.parse import urlencode
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.db import transaction
+from django.utils import timezone
 from django.db.models import F, Q
 from django.views.decorators.http import require_POST, require_http_methods
 from django.contrib import messages
@@ -226,8 +227,22 @@ def concluir_demanda(request, numero):
                 messages.error(request, "Confirme a revisão dos registros para concluir.")
                 transaction.set_rollback(True)
             else:
-                Demanda.objects.filter(pk=numero).update(status="concluida", assinatura_confirmada=True)
-                messages.success(request, "Fiscalização concluída. Aguardando homologação. A confirmação é demonstrativa.")
+                nome_assinante = (
+                    request.user.get_full_name().strip()
+                    or request.user.get_username()
+                )
+
+                Demanda.objects.filter(pk=numero).update(
+                    status="concluida",
+                    assinatura_confirmada=True,
+                    assinatura_nome=nome_assinante,
+                    assinatura_em=timezone.now(),
+                )
+
+                messages.success(
+                    request,
+                    "Fiscalização assinada e concluída. Aguardando homologação da Gerência VISAT."
+                )
     return redirect("detalhe_demanda", numero=numero)
 
 

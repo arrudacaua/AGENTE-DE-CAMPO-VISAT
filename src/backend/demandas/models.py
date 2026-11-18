@@ -40,6 +40,8 @@ class Demanda(models.Model):
     prioridade = models.CharField("Prioridade", max_length=10, choices=PRIORIDADE_CHOICES, default="media")
     anotacoes = models.TextField("Anotações", blank=True)
     assinatura_confirmada = models.BooleanField("Assinatura confirmada", default=False)
+    assinatura_nome = models.CharField("Nome do fiscal que assinou", max_length=150, blank=True, default="")
+    assinatura_em = models.DateTimeField("Data e hora da assinatura", null=True, blank=True)
     homologada = models.BooleanField("Homologada pela Gerência", default=False)
     relatorio = models.TextField("Relatório técnico", blank=True)
     relatorio_vinculado_sei = models.BooleanField("Vínculo conceitual com SEI", default=False)
