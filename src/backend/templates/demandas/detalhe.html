@@ -77,11 +77,29 @@
                                 <img src="{{ e.arquivo.url }}" alt="Foto da evidência"
                                      style="max-width: 100%; max-height: 350px; border-radius: 8px; margin-top: 10px;">
                             </a>
+                                                        {% if not gerente and demanda.status == 'andamento' and not demanda.homologada %}
+                                <form method="post"
+                                      action="{% url 'excluir_evidencia' demanda.numero e.id %}"
+                                      onsubmit="return confirm('Tem certeza que deseja excluir esta imagem?');"
+                                      style="margin-top: 10px;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-secondary">Excluir imagem</button>
+                                </form>
+                            {% endif %}
                         {% elif e.tipo == 'video' %}
                             <video controls style="max-width: 100%; max-height: 350px; margin-top: 10px;">
                                 <source src="{{ e.arquivo.url }}">
                                 Seu navegador não suporta a reprodução deste vídeo.
                             </video>
+                                                        {% if not gerente and demanda.status == 'andamento' and not demanda.homologada %}
+                                <form method="post"
+                                      action="{% url 'excluir_evidencia' demanda.numero e.id %}"
+                                      onsubmit="return confirm('Tem certeza que deseja excluir este vídeo?');"
+                                      style="margin-top: 10px;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-secondary">Excluir vídeo</button>
+                                </form>
+                            {% endif %}
                         {% elif e.tipo == 'audio' %}
     <audio controls style="max-width: 100%; margin-top: 10px;">
         <source src="{{ e.arquivo.url }}">
