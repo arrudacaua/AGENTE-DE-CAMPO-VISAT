@@ -94,7 +94,27 @@ class Evidencia(models.Model):
     ]
     demanda = models.ForeignKey(Demanda, on_delete=models.CASCADE, related_name="evidencias")
     tipo = models.CharField("Tipo", max_length=20, choices=TIPOS)
-    descricao = models.TextField("Descrição ou nome do arquivo")
+    descricao = models.TextField("Descrição ou nome do arquivo", blank=True)
+    arquivo = models.FileField(
+        "Arquivo",
+        upload_to="evidencias/%Y/%m/%d/",
+        blank=True,
+        null=True,
+    )
+    latitude = models.DecimalField(
+        "Latitude",
+        max_digits=9,
+        decimal_places=6,
+        null=True,
+        blank=True,
+    )
+    longitude = models.DecimalField(
+        "Longitude",
+        max_digits=9,
+        decimal_places=6,
+        null=True,
+        blank=True,
+    )
     criada_em = models.DateTimeField("Data do registro", auto_now_add=True)
 
     class Meta:

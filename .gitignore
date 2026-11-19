@@ -17,3 +17,6 @@ venv/
 
 # Arquivos estáticos gerados pelo Django
 src/backend/staticfiles/
+
+# Arquivos enviados localmente (evidências)
+src/backend/media/

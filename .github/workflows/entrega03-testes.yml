@@ -2,11 +2,16 @@ name: Entrega 03 - Testes e screencasts
 on:
   workflow_dispatch:
   push:
-    branches: [feature/backend-django-original]
+    branches:
+      - feature/backend-django-original
+      - correcao/logout-post
     paths:
       - 'src/backend/**'
       - '.github/workflows/entrega03-testes.yml'
       - 'scripts/entrega03/**'
+  pull_request:
+    branches:
+      - main
 permissions:
   contents: read
 jobs:

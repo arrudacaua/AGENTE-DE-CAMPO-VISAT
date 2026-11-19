@@ -3,12 +3,247 @@
 {% block breadcrumb %}{{ titulo }}{% endblock %}
 {% block content %}
 <div class="back-line"><a class="back-link" href="{% url 'inicio' %}#demandas"><svg class="icon"><use href="#i-back"></use></svg> Voltar às demandas</a></div>
-<section class="page-heading"><div><div class="eyebrow"><span class="eyebrow-line"></span> {% if gerente %}GERÊNCIA VISAT{% else %}FISCAL DE CAMPO{% endif %}</div><h1>{{ titulo }}<span class="accent-dot">.</span></h1><p>{% if localizacao %}Informe o endereço e as coordenadas do local fiscalizado. Latitude e longitude são opcionais e devem ser preenchidas juntas.{% elif cadastro_demanda %}Preencha os dados para cadastrar e encaminhar uma nova demanda ao fiscal responsável.{% else %}Registre as informações relacionadas à fiscalização em andamento.{% endif %}</p></div><span class="page-heading-icon"><svg class="icon"><use href="{% if cadastro_demanda %}#i-plus{% else %}#i-camera{% endif %}"></use></svg></span></section>
-<div class="form-shell"><form method="post" class="panel application-form" novalidate>{% csrf_token %}
-<div class="form-section-heading"><div><span class="section-eyebrow">{% if cadastro_demanda %}DADOS DO PROCESSO{% else %}NOVO REGISTRO{% endif %}</span><h2>Informações {% if cadastro_demanda %}da demanda{% else %}da evidência{% endif %}</h2></div><span class="form-required">* Campos obrigatórios</span></div>
-{% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
-<div class="form-fields {% if cadastro_demanda %}form-fields-grid{% endif %}">{% for field in form %}<div class="field-group {% if field.name == 'descricao' or field.name == 'endereco' %}field-span-2{% endif %}"><label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %}<span class="required-star"> *</span>{% endif %}</label>{{ field }}{% if field.help_text %}<small class="field-help">{{ field.help_text }}</small>{% endif %}{% if field.errors %}<div class="field-errors">{{ field.errors }}</div>{% endif %}</div>{% endfor %}</div>
-{% if not cadastro_demanda and not localizacao %}<div class="fine-print form-notice"><svg class="icon"><use href="#i-info"></use></svg> Este formulário registra uma descrição textual. Upload real de foto, áudio e vídeo ainda não está disponível.</div>{% endif %}
-<div class="form-actions sticky-form-actions"><a class="btn btn-secondary" href="{% if demanda %}{% url 'detalhe_demanda' demanda.numero %}{% else %}{% url 'inicio' %}{% endif %}">Cancelar</a><button class="btn btn-primary" type="submit"><svg class="icon"><use href="#i-check"></use></svg> {% if cadastro_demanda %}Cadastrar demanda{% elif localizacao %}Salvar localização{% else %}Salvar registro{% endif %}</button></div>
-</form></div>
+
+<section class="page-heading">
+    <div>
+        <div class="eyebrow"><span class="eyebrow-line"></span> {% if gerente %}GERÊNCIA VISAT{% else %}FISCAL DE CAMPO{% endif %}</div>
+        <h1>{{ titulo }}<span class="accent-dot">.</span></h1>
+        <p>{% if localizacao %}Informe o endereço e as coordenadas do local fiscalizado. Latitude e longitude são opcionais e devem ser preenchidas juntas.{% elif cadastro_demanda %}Preencha os dados para cadastrar e encaminhar uma nova demanda ao fiscal responsável.{% else %}Registre as informações relacionadas à fiscalização em andamento.{% endif %}</p>
+    </div>
+    <span class="page-heading-icon"><svg class="icon"><use href="{% if cadastro_demanda %}#i-plus{% else %}#i-camera{% endif %}"></use></svg></span>
+</section>
+
+<div class="form-shell">
+    <form method="post" enctype="{% if evidencia_form %}multipart/form-data{% else %}application/x-www-form-urlencoded{% endif %}" class="panel application-form" id="evidencia-form" novalidate>
+        {% csrf_token %}
+
+        <div class="form-section-heading">
+            <div>
+                <span class="section-eyebrow">{% if cadastro_demanda %}DADOS DO PROCESSO{% else %}NOVO REGISTRO{% endif %}</span>
+                <h2>Informações {% if cadastro_demanda %}da demanda{% else %}da evidência{% endif %}</h2>
+            </div>
+            <span class="form-required">* Campos obrigatórios</span>
+        </div>
+
+        {% if form.non_field_errors %}
+            <div class="form-errors">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        {% if evidencia_form %}
+            <input type="hidden" name="latitude" id="id_latitude">
+            <input type="hidden" name="longitude" id="id_longitude">
+            <p id="gps-status" class="field-help">Aguardando localização do dispositivo...</p>
+        {% endif %}
+
+        <div class="form-fields {% if cadastro_demanda %}form-fields-grid{% endif %}">
+            {% for field in form %}
+                <div class="field-group {% if field.name == 'descricao' or field.name == 'endereco' %}field-span-2{% endif %}">
+                    <label for="{{ field.id_for_label }}">
+                        {{ field.label }}{% if field.field.required %}<span class="required-star"> *</span>{% endif %}
+                    </label>
+                    {{ field }}
+                    {% if field.help_text %}<small class="field-help">{{ field.help_text }}</small>{% endif %}
+                    {% if field.errors %}<div class="field-errors">{{ field.errors }}</div>{% endif %}
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if evidencia_form %}
+            <div id="gravador-audio" class="field-group field-span-2" hidden>
+                <label>Gravador de áudio</label>
+                <p class="field-help">Grave um áudio diretamente pelo navegador. Depois, você poderá ouvi-lo antes de salvar.</p>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-primary" id="btn-gravar">Iniciar gravação</button>
+                    <button type="button" class="btn btn-secondary" id="btn-parar" disabled>Parar gravação</button>
+                </div>
+
+                <p id="audio-status" class="field-help" aria-live="polite">Selecione o tipo Áudio para utilizar o gravador.</p>
+
+                <div id="audio-preview-container" hidden>
+                    <audio id="audio-preview" controls></audio>
+                    <p class="field-help">O áudio será enviado junto com o formulário quando você clicar em Salvar registro.</p>
+                </div>
+            </div>
+        {% endif %}
+
+        {% if not cadastro_demanda and not localizacao and not evidencia_form %}
+            <div class="fine-print form-notice">
+                <svg class="icon"><use href="#i-info"></use></svg>
+                Este formulário registra uma descrição textual. Upload real de foto, áudio e vídeo ainda não está disponível.
+            </div>
+        {% endif %}
+
+        <div class="form-actions sticky-form-actions">
+            <a class="btn btn-secondary" href="{% if demanda %}{% url 'detalhe_demanda' demanda.numero %}{% else %}{% url 'inicio' %}{% endif %}">Cancelar</a>
+            <button class="btn btn-primary" type="submit">
+                <svg class="icon"><use href="#i-check"></use></svg>
+                {% if cadastro_demanda %}Cadastrar demanda{% elif localizacao %}Salvar localização{% else %}Salvar registro{% endif %}
+            </button>
+        </div>
+    </form>
+</div>
+
+{% if evidencia_form %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    // Captura da localização GPS
+    const latitude = document.getElementById("id_latitude");
+    const longitude = document.getElementById("id_longitude");
+    const gpsStatus = document.getElementById("gps-status");
+
+    if (!navigator.geolocation) {
+        gpsStatus.textContent = "Este navegador não suporta localização.";
+    } else {
+        navigator.geolocation.getCurrentPosition(
+            function (position) {
+                latitude.value = position.coords.latitude.toFixed(6);
+                longitude.value = position.coords.longitude.toFixed(6);
+                gpsStatus.textContent = "Localização capturada com sucesso.";
+            },
+            function () {
+                gpsStatus.textContent = "Não foi possível obter a localização. Verifique a permissão de GPS do navegador.";
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            }
+        );
+    }
+
+    // Gravador de áudio
+    const tipoSelect = document.getElementById("id_tipo");
+    const arquivoInput = document.getElementById("id_arquivo");
+    const gravador = document.getElementById("gravador-audio");
+    const btnGravar = document.getElementById("btn-gravar");
+    const btnParar = document.getElementById("btn-parar");
+    const audioStatus = document.getElementById("audio-status");
+    const previewContainer = document.getElementById("audio-preview-container");
+    const audioPreview = document.getElementById("audio-preview");
+
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let audioStream = null;
+    let audioUrl = null;
+
+    function atualizarGravador() {
+        const selecionouAudio = tipoSelect.value === "audio";
+        gravador.hidden = !selecionouAudio;
+
+        if (selecionouAudio) {
+            arquivoInput.accept = "audio/*";
+        } else {
+            arquivoInput.accept = "image/*,video/*,audio/*";
+        }
+    }
+
+    tipoSelect.addEventListener("change", atualizarGravador);
+    atualizarGravador();
+
+    btnGravar.addEventListener("click", async function () {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) {
+            audioStatus.textContent = "Seu navegador não oferece suporte à gravação de áudio.";
+            return;
+        }
+
+        try {
+            audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+            let opcoes = {};
+            const formatos = [
+                "audio/webm;codecs=opus",
+                "audio/webm",
+                "audio/ogg;codecs=opus",
+                "audio/mp4"
+            ];
+
+            for (const formato of formatos) {
+                if (MediaRecorder.isTypeSupported(formato)) {
+                    opcoes.mimeType = formato;
+                    break;
+                }
+            }
+
+            mediaRecorder = new MediaRecorder(audioStream, opcoes);
+            audioChunks = [];
+
+            mediaRecorder.addEventListener("dataavailable", function (event) {
+                if (event.data.size > 0) {
+                    audioChunks.push(event.data);
+                }
+            });
+
+            mediaRecorder.addEventListener("stop", function () {
+                const mimeType = mediaRecorder.mimeType || "audio/webm";
+                const extensoes = {
+                    "audio/webm": "webm",
+                    "audio/ogg": "ogg",
+                    "audio/mp4": "m4a",
+                    "audio/mpeg": "mp3",
+                    "audio/wav": "wav"
+                };
+
+                const tipoMime = mimeType.split(";")[0];
+                const extensao = extensoes[tipoMime];
+
+                if (!extensao) {
+                    audioStatus.textContent = "Formato de áudio não suportado para envio.";
+                    audioStream.getTracks().forEach(track => track.stop());
+                    return;
+                }
+
+                const blob = new Blob(audioChunks, { type: mimeType });
+                const arquivo = new File(
+                    [blob],
+                    "gravacao." + extensao,
+                    { type: tipoMime }
+                );
+
+                const transferencia = new DataTransfer();
+                transferencia.items.add(arquivo);
+                arquivoInput.files = transferencia.files;
+
+                if (audioUrl) {
+                    URL.revokeObjectURL(audioUrl);
+                }
+
+                audioUrl = URL.createObjectURL(blob);
+                audioPreview.src = audioUrl;
+                previewContainer.hidden = false;
+
+                audioStatus.textContent = "Gravação concluída. Áudio pronto para ser enviado.";
+                audioStream.getTracks().forEach(track => track.stop());
+            });
+
+            mediaRecorder.start();
+
+            btnGravar.disabled = true;
+            btnParar.disabled = false;
+            audioStatus.textContent = "Gravando áudio...";
+
+            previewContainer.hidden = true;
+
+        } catch (error) {
+            audioStatus.textContent = "Não foi possível acessar o microfone. Verifique a permissão do navegador.";
+        }
+    });
+
+    btnParar.addEventListener("click", function () {
+        if (mediaRecorder && mediaRecorder.state === "recording") {
+            mediaRecorder.stop();
+            btnGravar.disabled = false;
+            btnParar.disabled = true;
+        }
+    });
+
+    document.getElementById("evidencia-form").addEventListener("submit", function (event) {
+        if (tipoSelect.value === "audio" && (!arquivoInput.files || arquivoInput.files.length === 0)) {
+            event.preventDefault();
+            audioStatus.textContent = "Grave um áudio ou selecione um arquivo de áudio antes de salvar.";
+        }
+    });
+});
+</script>
+{% endif %}
 {% endblock %}

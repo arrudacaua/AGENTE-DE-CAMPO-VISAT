@@ -1,11 +1,12 @@
 from datetime import date, timedelta
 from decimal import Decimal
 from django.test import TestCase, Client
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.auth.models import User, Group
 from django.urls import reverse
-from .models import Demanda, ItemChecklist
+from .models import Demanda, ItemChecklist, Evidencia
 from .constants import ITENS_PADRAO
-from .forms import DemandaForm
+from .forms import DemandaForm, EvidenciaForm
 
 
 class FluxoFiscalTests(TestCase):
@@ -252,6 +253,37 @@ class FluxoFiscalTests(TestCase):
         self.assertEqual(self.d.processo_sei, 'SEI-TESTE-001')
 
 
+    def test_logout_bloqueia_get_sem_encerrar_sessao(self):
+        resposta = self.client.get(reverse('logout'))
+
+        self.assertEqual(resposta.status_code, 405)
+
+        # O usuário continua autenticado após a tentativa por GET.
+        resposta_inicio = self.client.get(reverse('inicio'))
+        self.assertEqual(resposta_inicio.status_code, 200)
+
+    def test_logout_post_encerra_sessao(self):
+        resposta = self.client.post(reverse('logout'))
+
+        self.assertRedirects(resposta, reverse('login'))
+
+        # Após o logout, o usuário não consegue acessar área restrita.
+        resposta_inicio = self.client.get(reverse('inicio'))
+        self.assertEqual(resposta_inicio.status_code, 302)
+        self.assertIn(reverse('login'), resposta_inicio.url)
+
+    def test_logout_post_sem_csrf_e_bloqueado(self):
+        cliente_seguro = Client(enforce_csrf_checks=True)
+        cliente_seguro.force_login(self.a)
+
+        resposta = cliente_seguro.post(reverse('logout'))
+
+        self.assertEqual(resposta.status_code, 403)
+
+        # A sessão continua ativa porque o POST foi rejeitado.
+        resposta_inicio = cliente_seguro.get(reverse('inicio'))
+        self.assertEqual(resposta_inicio.status_code, 200)
+
 
 from django.test import TransactionTestCase
 from django.db import connection
@@ -288,3 +320,359 @@ class MigracaoLegadaTests(TransactionTestCase):
             self.assertEqual(nova.itens_checklist.count(), 6)
         finally:
             MigrationExecutor(connection).migrate(atual)
+
+class EvidenciasTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.gerente = User.objects.create_user(
+            'gerente_evidencias',
+            password='SenhaTeste123!',
+            is_staff=True
+        )
+        cls.fiscal = User.objects.create_user(
+            'fiscal_evidencias',
+            password='SenhaTeste123!'
+        )
+        cls.outro_fiscal = User.objects.create_user(
+            'outro_fiscal_evidencias',
+            password='SenhaTeste123!'
+        )
+
+    def setUp(self):
+        self.client.force_login(self.fiscal)
+
+        self.demanda = Demanda.objects.create(
+            processo_sei='SEI-EVIDENCIA-001',
+            numero_os='OS-EVIDENCIA-001',
+            descricao='Teste de evidências',
+            endereco='Rua de teste',
+            distrito='Distrito I',
+            bairro='Centro',
+            prazo=date.today() + timedelta(days=7),
+            fiscal=self.fiscal,
+            status='andamento'
+        )
+
+        ItemChecklist.objects.bulk_create([
+            ItemChecklist(demanda=self.demanda, item=item)
+            for item in ITENS_PADRAO
+        ])
+
+    def url(self, acao='detalhe_demanda'):
+        return reverse(acao, args=[self.demanda.pk])
+
+    def arquivo(self, nome='foto.jpg', conteudo=b'conteudo', tipo='image/jpeg'):
+        return SimpleUploadedFile(
+            nome,
+            conteudo,
+            content_type=tipo
+        )
+
+    def test_registrar_foto_vinculada_a_demanda(self):
+        resposta = self.client.post(
+            self.url('adicionar_evidencia'),
+            {
+                'tipo': 'foto',
+                'descricao': 'Foto da fachada',
+                'arquivo': self.arquivo(),
+                'latitude': '-8.060000',
+                'longitude': '-34.880000',
+            }
+        )
+
+        self.assertRedirects(resposta, self.url())
+
+        evidencia = Evidencia.objects.get(demanda=self.demanda)
+
+        self.assertEqual(evidencia.tipo, 'foto')
+        self.assertEqual(evidencia.descricao, 'Foto da fachada')
+        self.assertEqual(evidencia.latitude, Decimal('-8.060000'))
+        self.assertEqual(evidencia.longitude, Decimal('-34.880000'))
+        self.assertTrue(evidencia.arquivo)
+
+    def test_registrar_video_audio_e_anotacao(self):
+        casos = [
+            {
+                'tipo': 'video',
+                'descricao': 'Vídeo da inspeção',
+                'arquivo': self.arquivo(
+                    'inspecao.mp4',
+                    b'video-teste',
+                    'video/mp4'
+                ),
+            },
+            {
+                'tipo': 'audio',
+                'descricao': 'Áudio da inspeção',
+                'arquivo': self.arquivo(
+                    'relato.mp3',
+                    b'audio-teste',
+                    'audio/mpeg'
+                ),
+            },
+            {
+                'tipo': 'anotacao',
+                'descricao': 'Constatação realizada no local',
+            },
+        ]
+
+        for caso in casos:
+            resposta = self.client.post(
+                self.url('adicionar_evidencia'),
+                caso
+            )
+            self.assertRedirects(resposta, self.url())
+
+        self.assertEqual(self.demanda.evidencias.count(), 3)
+        self.assertTrue(
+            self.demanda.evidencias.filter(tipo='video').exists()
+        )
+        self.assertTrue(
+            self.demanda.evidencias.filter(tipo='audio').exists()
+        )
+        self.assertTrue(
+            self.demanda.evidencias.filter(tipo='anotacao').exists()
+        )
+
+    def test_validacoes_do_formulario_de_evidencias(self):
+        casos_invalidos = [
+            {
+                'tipo': 'foto',
+                'arquivo': self.arquivo(
+                    'documento.txt',
+                    b'texto',
+                    'text/plain'
+                ),
+            },
+            {
+                'tipo': 'foto',
+                'arquivo': self.arquivo(
+                    'foto.jpg',
+                    b'conteudo',
+                    'text/plain'
+                ),
+            },
+            {
+                'tipo': 'foto',
+                'arquivo': self.arquivo(
+                    'grande.jpg',
+                    b'x' * (50 * 1024 * 1024 + 1),
+                    'image/jpeg'
+                ),
+            },
+        ]
+
+        for dados in casos_invalidos:
+            with self.subTest(dados=dados['arquivo'].name):
+                form = EvidenciaForm(
+                    data={
+                        'tipo': dados['tipo'],
+                        'descricao': 'Teste de validação',
+                    },
+                    files={'arquivo': dados['arquivo']}
+                )
+                self.assertFalse(form.is_valid())
+
+        form_sem_arquivo = EvidenciaForm(
+            data={
+                'tipo': 'foto',
+                'descricao': 'Foto sem arquivo',
+            }
+        )
+        self.assertFalse(form_sem_arquivo.is_valid())
+
+        form_anotacao_com_arquivo = EvidenciaForm(
+            data={
+                'tipo': 'anotacao',
+                'descricao': 'Anotação com arquivo indevido',
+            },
+            files={
+                'arquivo': self.arquivo()
+            }
+        )
+        self.assertFalse(form_anotacao_com_arquivo.is_valid())
+
+    def test_acesso_a_evidencias_restrito_ao_fiscal_responsavel(self):
+        dados = {
+            'tipo': 'foto',
+            'descricao': 'Foto não autorizada',
+            'arquivo': self.arquivo(),
+        }
+
+        self.client.force_login(self.outro_fiscal)
+        resposta = self.client.post(
+            self.url('adicionar_evidencia'),
+            dados
+        )
+        self.assertEqual(resposta.status_code, 404)
+
+        self.client.force_login(self.gerente)
+        resposta = self.client.post(
+            self.url('adicionar_evidencia'),
+            dados
+        )
+        self.assertEqual(resposta.status_code, 403)
+
+        cliente_anonimo = Client()
+        resposta = cliente_anonimo.get(
+            self.url('adicionar_evidencia')
+        )
+        self.assertEqual(resposta.status_code, 302)
+
+        self.assertEqual(self.demanda.evidencias.count(), 0)
+
+    def test_excluir_audio_por_post(self):
+        audio = Evidencia.objects.create(
+            demanda=self.demanda,
+            tipo='audio',
+            descricao='Áudio para excluir',
+            arquivo=self.arquivo(
+                'relato.mp3',
+                b'audio-teste',
+                'audio/mpeg'
+            )
+        )
+
+        resposta = self.client.get(
+            reverse(
+                'excluir_audio',
+                args=[self.demanda.pk, audio.pk]
+            )
+        )
+        self.assertEqual(resposta.status_code, 405)
+        self.assertTrue(Evidencia.objects.filter(pk=audio.pk).exists())
+
+        resposta = self.client.post(
+            reverse(
+                'excluir_audio',
+                args=[self.demanda.pk, audio.pk]
+            )
+        )
+
+        self.assertRedirects(resposta, self.url())
+        self.assertFalse(Evidencia.objects.filter(pk=audio.pk).exists())
+
+    def test_excluir_audio_nao_remove_foto_ou_video(self):
+        for tipo, nome, mime in [
+            ('foto', 'foto.jpg', 'image/jpeg'),
+            ('video', 'video.mp4', 'video/mp4'),
+        ]:
+            evidencia = Evidencia.objects.create(
+                demanda=self.demanda,
+                tipo=tipo,
+                descricao='Evidência protegida',
+                arquivo=self.arquivo(nome, b'teste', mime)
+            )
+
+            resposta = self.client.post(
+                reverse(
+                    'excluir_audio',
+                    args=[self.demanda.pk, evidencia.pk]
+                )
+            )
+
+            self.assertEqual(resposta.status_code, 404)
+            self.assertTrue(
+                Evidencia.objects.filter(pk=evidencia.pk).exists()
+            )
+
+    def test_outro_fiscal_nao_pode_excluir_audio(self):
+        audio = Evidencia.objects.create(
+            demanda=self.demanda,
+            tipo='audio',
+            descricao='Áudio protegido',
+            arquivo=self.arquivo(
+                'protegido.mp3',
+                b'audio-teste',
+                'audio/mpeg'
+            )
+        )
+
+        self.client.force_login(self.outro_fiscal)
+
+        resposta = self.client.post(
+            reverse(
+                'excluir_audio',
+                args=[self.demanda.pk, audio.pk]
+            )
+        )
+
+        self.assertEqual(resposta.status_code, 404)
+        self.assertTrue(
+            Evidencia.objects.filter(pk=audio.pk).exists()
+        )
+
+    def test_demanda_encerrada_bloqueia_registro_e_exclusao(self):
+        audio = Evidencia.objects.create(
+            demanda=self.demanda,
+            tipo='audio',
+            descricao='Áudio preservado',
+            arquivo=self.arquivo(
+                'preservado.mp3',
+                b'audio-teste',
+                'audio/mpeg'
+            )
+        )
+
+        self.demanda.status = 'concluida'
+        self.demanda.save()
+
+        resposta = self.client.post(
+            self.url('adicionar_evidencia'),
+            {
+                'tipo': 'foto',
+                'descricao': 'Foto indevida',
+                'arquivo': self.arquivo(),
+            }
+        )
+
+        self.assertRedirects(resposta, self.url())
+        self.assertEqual(self.demanda.evidencias.count(), 1)
+
+        resposta = self.client.post(
+            reverse(
+                'excluir_audio',
+                args=[self.demanda.pk, audio.pk]
+            )
+        )
+
+        self.assertRedirects(resposta, self.url())
+        self.assertTrue(
+            Evidencia.objects.filter(pk=audio.pk).exists()
+        )
+
+    def test_contagem_de_evidencias_por_tipo(self):
+        resposta = self.client.get(self.url())
+
+        self.assertEqual(resposta.status_code, 200)
+        self.assertEqual(
+            resposta.context['contagem_evidencias'],
+            {
+                'foto': 0,
+                'video': 0,
+                'audio': 0,
+                'anotacao': 0,
+            }
+        )
+
+        for tipo in ['foto', 'foto', 'video', 'audio', 'anotacao']:
+            Evidencia.objects.create(
+                demanda=self.demanda,
+                tipo=tipo,
+                descricao=f'Teste {tipo}'
+            )
+
+        resposta = self.client.get(self.url())
+
+        self.assertEqual(
+            resposta.context['contagem_evidencias'],
+            {
+                'foto': 2,
+                'video': 1,
+                'audio': 1,
+                'anotacao': 1,
+            }
+        )
+
+        for texto in ['Fotos: 2', 'Vídeos: 1', 'Áudios: 1', 'Anotações: 1']:
+            self.assertContains(resposta, texto)

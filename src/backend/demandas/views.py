@@ -1,3 +1,4 @@
+from urllib import request
 from urllib.parse import urlencode
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
@@ -11,9 +12,9 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
 from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect, render
-from .forms import DemandaForm, LocalizacaoForm, RespostasChecklistForm, EvidenciaForm
+from .forms import DemandaForm, LocalizacaoForm, RespostasChecklistForm, EvidenciaForm, AtribuirFiscalForm
 from .constants import ITENS_PADRAO
-from .models import Demanda, ItemChecklist
+from .models import Demanda, ItemChecklist, Evidencia
 
 
 
@@ -38,6 +39,7 @@ def login_view(request):
     return render(request, "demandas/login.html")
 
 
+@require_POST
 def logout_view(request):
     logout(request)
     return redirect("login")
@@ -117,9 +119,38 @@ def criar_demanda(request):
 
 
 @login_required
+@user_passes_test(eh_gerente)
+@require_POST
+def atribuir_fiscal(request, numero):
+    demanda = get_object_or_404(Demanda, numero=numero)
+    if demanda.fiscal_id:
+        messages.error(request, "Esta demanda já tem um fiscal responsável.")
+        return redirect("detalhe_demanda", numero=demanda.numero)
+
+    form = AtribuirFiscalForm(request.POST, instance=demanda)
+    if form.is_valid():
+        form.save()
+        messages.success(request, "Fiscal atribuído com sucesso.")
+    else:
+        messages.error(request, "Selecione um fiscal válido para atribuir à demanda.")
+    return redirect("detalhe_demanda", numero=demanda.numero)
+
+
+@login_required
 def detalhe_demanda(request, numero):
     demanda = get_object_or_404(demandas_visiveis(request.user), numero=numero)
     contexto = {"demanda": demanda, "gerente": eh_gerente(request.user)}
+    contagens = demanda.evidencias.values("tipo").annotate(total=Count("id"))
+
+    contexto["contagem_evidencias"] = {
+        tipo: 0 for tipo, _ in Evidencia.TIPOS
+    }
+
+    contexto["contagem_evidencias"].update({
+        item["tipo"]: item["total"] for item in contagens
+    })
+    if contexto["gerente"] and not demanda.fiscal_id:
+        contexto["atribuicao_form"] = AtribuirFiscalForm(instance=demanda)
     endereco = f"{demanda.endereco}, {demanda.bairro}, Recife, PE"
     contexto["busca_mapa"] = "https://www.google.com/maps/search/?" + urlencode({"api": "1", "query": endereco})
     if demanda.tem_coordenadas:
@@ -196,18 +227,54 @@ def adicionar_evidencia(request, numero):
     demanda = demanda_do_fiscal(request.user, numero)
     if not em_edicao(request, demanda):
         return redirect("detalhe_demanda", numero=numero)
-    form = EvidenciaForm(request.POST or None)
+    form = EvidenciaForm(request.POST or None, request.FILES or None)
     if request.method == "POST" and form.is_valid():
         with transaction.atomic():
             atualizado = Demanda.objects.filter(pk=numero, fiscal=request.user, status="andamento", homologada=False).update(revisao=F("revisao")+1)
             if atualizado:
                 evidencia = form.save(commit=False)
                 evidencia.demanda = demanda
+                evidencia.latitude = request.POST.get("latitude") or None
+                evidencia.longitude = request.POST.get("longitude") or None
                 evidencia.save()
         messages.success(request, "Evidência registrada.") if atualizado else messages.error(request, "A fiscalização foi encerrada. Registro não alterado.")
         return redirect("detalhe_demanda", numero=numero)
-    return render(request, "demandas/form.html", {"form": form, "titulo": "Registrar evidência", "demanda": demanda, "gerente": False})
+    return render(request, "demandas/form.html", {"form": form, "titulo": "Registrar evidência", "demanda": demanda, "gerente": False, "evidencia_form": True})
 
+@login_required
+@require_POST
+def excluir_audio(request, numero, evidencia_id):
+    demanda = demanda_do_fiscal(request.user, numero)
+
+    if not em_edicao(request, demanda):
+        return redirect("detalhe_demanda", numero=numero)
+
+    evidencia = get_object_or_404(
+        Evidencia,
+        pk=evidencia_id,
+        demanda=demanda,
+        tipo="audio"
+    )
+
+    with transaction.atomic():
+        atualizado = Demanda.objects.filter(
+            pk=numero,
+            fiscal=request.user,
+            status="andamento",
+            homologada=False
+        ).update(revisao=F("revisao") + 1)
+
+        if atualizado:
+            evidencia.arquivo.delete(save=False)
+            evidencia.delete()
+            messages.success(request, "Áudio excluído com sucesso.")
+        else:
+            messages.error(
+                request,
+                "A fiscalização foi encerrada. O áudio não foi excluído."
+            )
+
+    return redirect("detalhe_demanda", numero=numero)
 
 @login_required
 @require_POST

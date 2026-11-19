@@ -63,9 +63,29 @@
         {% endif %}
       </nav>
       <div class="sidebar-bottom">
-        <div class="sidebar-help"><svg class="icon"><use href="#i-shield"></use></svg><div><strong>Ambiente de testes</strong><span>Protótipo acadêmico · sem integração real com o SEI</span></div></div>
-        <div class="user-panel"><div class="avatar">{{ user.username|slice:':1'|upper }}</div><div class="user-panel-copy"><strong>{{ user.get_full_name|default:user.username|truncatechars:22 }}</strong><span>{% if gerente %}Gerência VISAT{% else %}Fiscal de campo{% endif %}</span></div><a class="icon-button" href="{% url 'logout' %}" title="Sair do sistema" aria-label="Sair do sistema"><svg class="icon"><use href="#i-logout"></use></svg></a></div>
-      </div>
+    <div class="sidebar-help">
+        <svg class="icon"><use href="#i-shield"></use></svg>
+        <div>
+            <strong>Ambiente de testes</strong>
+            <span>Protótipo acadêmico · sem integração real com o SEI</span>
+        </div>
+    </div>
+
+    <div class="user-panel">
+        <div class="avatar">{{ user.username|slice:':1'|upper }}</div>
+        <div class="user-panel-copy">
+            <strong>{{ user.get_full_name|default:user.username|truncatechars:22 }}</strong>
+            <span>{% if gerente %}Gerência VISAT{% else %}Fiscal de campo{% endif %}</span>
+        </div>
+
+        <form method="post" action="{% url 'logout' %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="icon-button" title="Sair do sistema" aria-label="Sair do sistema">
+                <svg class="icon"><use href="#i-logout"></use></svg>
+            </button>
+        </form>
+    </div>
+</div>
     </aside>
     <div class="app-main">
       <header class="topbar">
