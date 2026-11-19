@@ -12,7 +12,32 @@
     <div class="button-wrap"><form method="post" action="{% url 'iniciar_demanda' demanda.numero %}">{% csrf_token %}<button class="btn btn-primary" type="submit">{% if demanda.status == 'aberta' %}Iniciar Fiscalização{% else %}Continuar Fiscalização{% endif %}</button></form>
     {% if demanda.status == 'andamento' %}<a class="btn btn-secondary" href="{% url 'adicionar_evidencia' demanda.numero %}">Registrar evidência</a>{% endif %}</div></section>
     {% endif %}
-    {% if demanda.status == 'concluida' or demanda.homologada %}<section class="panel detail-section" role="status"><h2>{% if demanda.homologada %}Fiscalização homologada{% else %}Aguardando homologação{% endif %}</h2><p>Fiscalização concluída. Os registros estão disponíveis apenas para consulta.</p></section>{% endif %}
+    {% if demanda.assinatura_confirmada %}
+    <section class="panel detail-section">
+        <div class="panel-heading">
+            <div>
+                <span class="section-eyebrow">REGISTRO DA ASSINATURA</span>
+                <h2>Fiscalização assinada</h2>
+            </div>
+        </div>
+        <div class="information-grid">
+            <div class="info-block">
+                <span>Fiscal que assinou</span>
+                <strong>{{ demanda.assinatura_nome }}</strong>
+            </div>
+            <div class="info-block">
+                <span>Data e hora da assinatura</span>
+                <strong>{{ demanda.assinatura_em|date:"d/m/Y H:i" }}</strong>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+    {% if demanda.status == 'concluida' or demanda.homologada %}
+<section class="panel detail-section" role="status">
+    <h2>{% if demanda.homologada %}Fiscalização homologada{% else %}Aguardando homologação{% endif %}</h2>
+    <p>Fiscalização concluída. Os registros estão disponíveis apenas para consulta.</p>
+</section>
+{% endif %}
     <section class="panel detail-section"><div class="panel-heading"><div><span class="section-eyebrow">DADOS DA DEMANDA</span><h2>Informações gerais</h2></div><span class="panel-corner-icon"><svg class="icon"><use href="#i-info"></use></svg></span></div><div class="information-grid"><div class="info-block"><span>Número da OS</span><strong>{{ demanda.numero_os|default:"Não informado" }}</strong></div><div class="info-block"><span>Distrito / bairro</span><strong>{{ demanda.distrito }} / {{ demanda.bairro }}</strong></div><div class="info-block"><span>Processo SEI</span><strong>{{ demanda.processo_sei }}</strong></div><div class="info-block"><span>Fiscal responsável</span><strong>{{ demanda.fiscal_nome }}</strong></div><div class="info-block"><span>Data de recebimento</span><strong>{{ demanda.data_recebimento|date:"d/m/Y" }}</strong></div><div class="info-block"><span>Prazo de resposta</span><strong>{{ demanda.prazo|date:"d/m/Y" }}</strong></div></div><div class="description-block"><span>Descrição da demanda</span><p>{{ demanda.descricao|linebreaksbr }}</p></div></section>
     {% if gerente and not demanda.fiscal %}
     <section class="panel detail-section">
@@ -139,7 +164,7 @@
         {% endfor %}
     </div>
 </section>
-    {% if not gerente and demanda.status == 'andamento' and not demanda.homologada %}<section class="panel completion-panel"><div class="panel-heading"><div><span class="section-eyebrow">ENCERRAMENTO</span><h2>Concluir fiscalização</h2></div><span class="metric-icon metric-icon-green"><svg class="icon"><use href="#i-check-circle"></use></svg></span></div><p>Antes de concluir, confira todos os itens do checklist. A confirmação abaixo é demonstrativa, não uma assinatura digital.</p><form method="post" action="{% url 'concluir_demanda' demanda.numero %}">{% csrf_token %}<label class="checkbox-field"><input type="checkbox" name="confirmar" value="sim" required><span>Confirmo que revisei os registros da fiscalização.</span></label><button class="btn btn-primary" type="submit"><svg class="icon"><use href="#i-check"></use></svg> Concluir fiscalização</button></form></section>{% endif %}
+    {% if not gerente and demanda.status == 'andamento' and not demanda.homologada %}<section class="panel completion-panel"><div class="panel-heading"><div><span class="section-eyebrow">ENCERRAMENTO</span><h2>Concluir fiscalização</h2></div><span class="metric-icon metric-icon-green"><svg class="icon"><use href="#i-check-circle"></use></svg></span></div><p>Antes de concluir, confira todos os itens do checklist. Ao confirmar, o sistema registrará sua identificação e a data e hora da assinatura eletrônica.</p><form method="post" action="{% url 'concluir_demanda' demanda.numero %}">{% csrf_token %}<label class="checkbox-field"><input type="checkbox" name="confirmar" value="sim" required><span>Confirmo que revisei os registros da fiscalização.</span></label><button class="btn btn-primary" type="submit"><svg class="icon"><use href="#i-check"></use></svg> Concluir fiscalização</button></form></section>{% endif %}
     {% if gerente %}<section class="panel completion-panel"><div class="panel-heading"><div><span class="section-eyebrow">VALIDAÇÃO DA GERÊNCIA</span><h2>Homologação e relatório</h2></div><span class="metric-icon metric-icon-green"><svg class="icon"><use href="#i-shield"></use></svg></span></div><div class="homologation-state"><span>Homologação</span>{% if demanda.homologada %}<span class="status-badge status-concluida"><span class="status-dot"></span> Homologada</span>{% else %}<span class="status-badge status-aberta"><span class="status-dot"></span> Pendente</span>{% endif %}</div><div class="button-wrap"><form method="post" action="{% url 'homologar_demanda' demanda.numero %}">{% csrf_token %}<button class="btn btn-primary" type="submit" {% if demanda.homologada %}disabled{% endif %}><svg class="icon"><use href="#i-check-circle"></use></svg> {% if demanda.homologada %}Já homologada{% else %}Homologar fiscalização{% endif %}</button></form>{% if demanda.homologada %}<a class="btn btn-secondary" href="{% url 'gerar_relatorio' demanda.numero %}"><svg class="icon"><use href="#i-file"></use></svg> Ver relatório técnico</a>{% endif %}</div>{% if demanda.relatorio %}<div class="sei-callout"><div><strong>Registro de vínculo com SEI</strong><p>Indicador interno de demonstração; não envia arquivos ao SEI.</p></div>{% if demanda.relatorio_vinculado_sei %}<span class="status-badge status-concluida">Registrado</span>{% else %}<form method="post" action="{% url 'vincular_sei' demanda.numero %}">{% csrf_token %}<button class="btn btn-ghost" type="submit">Registrar vínculo</button></form>{% endif %}</div>{% endif %}</section>{% endif %}
   </div>
   <aside class="detail-aside"><section class="panel aside-card"><div class="panel-heading"><div><span class="section-eyebrow">LOCAL DA INSPEÇÃO</span><h2>Localização</h2></div><svg class="icon"><use href="#i-pin"></use></svg></div>{% if mapa_url %}

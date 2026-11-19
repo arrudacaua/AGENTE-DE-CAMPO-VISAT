@@ -294,7 +294,7 @@ class MigracaoLegadaTests(TransactionTestCase):
     def test_preserva_registros_e_completa_itens_sem_duplicar(self):
         executor = MigrationExecutor(connection)
         anterior = [('demandas', '0001_initial')]
-        atual = [('demandas', '0003_completar_checklist')]
+        atual = [('demandas', '0004_demanda_assinatura_em_demanda_assinatura_nome')]
         executor.migrate(anterior)
         try:
             apps = executor.loader.project_state(anterior).apps
