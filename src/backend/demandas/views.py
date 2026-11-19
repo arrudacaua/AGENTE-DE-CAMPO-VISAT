@@ -242,6 +242,46 @@ def adicionar_evidencia(request, numero):
 
 @login_required
 @require_POST
+def excluir_evidencia(request, numero, evidencia_id):
+    demanda = demanda_do_fiscal(request.user, numero)
+
+    if not em_edicao(request, demanda):
+        return redirect("detalhe_demanda", numero=numero)
+
+    evidencia = get_object_or_404(
+        Evidencia,
+        pk=evidencia_id,
+        demanda=demanda,
+        tipo__in=["foto", "video"],
+    )
+
+    nome_tipo = evidencia.get_tipo_display()
+
+    with transaction.atomic():
+        atualizado = Demanda.objects.filter(
+            pk=numero,
+            fiscal=request.user,
+            status="andamento",
+            homologada=False,
+        ).update(revisao=F("revisao") + 1)
+
+        if atualizado:
+            if evidencia.arquivo:
+                evidencia.arquivo.delete(save=False)
+
+            evidencia.delete()
+            messages.success(request, f"{nome_tipo} excluído com sucesso.")
+        else:
+            messages.error(
+                request,
+                "A fiscalização foi encerrada. A evidência não foi excluída.",
+            )
+
+    return redirect("detalhe_demanda", numero=numero)
+
+
+@login_required
+@require_POST
 def excluir_audio(request, numero, evidencia_id):
     demanda = demanda_do_fiscal(request.user, numero)
 
