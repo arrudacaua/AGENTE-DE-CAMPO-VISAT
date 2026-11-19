@@ -1,9 +1,129 @@
 {% extends "demandas/base.html" %}
+
 {% block title %}Relatório #{{ demanda.numero }} | VISAT{% endblock %}
 {% block breadcrumb %}Relatório técnico{% endblock %}
+
 {% block content %}
-<div class="back-line no-print"><a class="back-link" href="{% url 'detalhe_demanda' demanda.numero %}"><svg class="icon"><use href="#i-back"></use></svg> Voltar à demanda</a></div>
-<section class="page-heading no-print"><div><div class="eyebrow"><span class="eyebrow-line"></span> DOCUMENTAÇÃO</div><h1>Relatório técnico<span class="accent-dot">.</span></h1><p>Prévia do documento para revisão e impressão.</p></div><button class="btn btn-primary" type="button" onclick="window.print()"><svg class="icon"><use href="#i-download"></use></svg> Imprimir / salvar PDF</button></section>
-<div class="report-warning no-print"><svg class="icon"><use href="#i-info"></use></svg><span>Documento demonstrativo gerado a partir dos registros. Não utiliza IA, não possui assinatura digital e não foi enviado ao SEI.</span></div>
-<article class="paper-report"><header class="report-letterhead"><div class="brand-emblem"><svg class="icon"><use href="#i-eye"></use></svg></div><div><strong>VISAT · AGENTE DE CAMPO</strong><small>Relatório de fiscalização · Demonstração</small></div><span>#{% if demanda.numero %}{{ demanda.numero|stringformat:"03d" }}{% endif %}</span></header><h2>Relatório técnico sanitário</h2><p class="report-subtitle">Rascunho para conferência da gerência</p><div class="report-body">{{ demanda.relatorio|linebreaksbr }}</div><footer class="report-footer">Documento demonstrativo. Revisão por servidor competente obrigatória antes de qualquer uso oficial.</footer></article>
+<style>
+  .paper-report.folha-a4 {
+    width: 210mm;
+    min-height: 297mm;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .review-panel {
+    max-width: 800px;
+    margin: 20px auto 0;
+  }
+
+  .review-panel .btn:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  @media print {
+    .paper-report.folha-a4 {
+      width: auto;
+      min-height: 0;
+    }
+  }
+</style>
+
+<div class="back-line no-print">
+  <a class="back-link" href="{% url 'detalhe_demanda' demanda.numero %}">
+    <svg class="icon"><use href="#i-back"></use></svg>
+    Voltar à demanda
+  </a>
+</div>
+
+<section class="page-heading no-print">
+  <div>
+    <div class="eyebrow">
+      <span class="eyebrow-line"></span> DOCUMENTAÇÃO
+    </div>
+    <h1>Relatório técnico<span class="accent-dot">.</span></h1>
+    <p>Prévia do documento para revisão antes da assinatura.</p>
+  </div>
+
+  <button class="btn btn-primary" type="button" onclick="window.print()">
+    <svg class="icon"><use href="#i-download"></use></svg>
+    Imprimir / salvar PDF
+  </button>
+</section>
+
+<div class="report-warning no-print">
+  <svg class="icon"><use href="#i-info"></use></svg>
+  <span>
+    <strong>Atenção:</strong> conteúdo demonstrativo, gerado a partir dos registros.
+    A integração com IA ainda não está ativa. Revise as informações antes de qualquer assinatura.
+  </span>
+</div>
+
+<article class="paper-report folha-a4">
+  <header class="report-letterhead">
+    <div class="brand-emblem">
+      <svg class="icon"><use href="#i-eye"></use></svg>
+    </div>
+
+    <div>
+      <strong>VISAT · AGENTE DE CAMPO</strong>
+      <small>Relatório de fiscalização · Demonstração</small>
+    </div>
+
+    <span>
+      #{% if demanda.numero %}{{ demanda.numero|stringformat:"03d" }}{% endif %}
+    </span>
+  </header>
+
+  <h2>Relatório técnico sanitário</h2>
+  <p class="report-subtitle">Prévia para conferência do fiscal responsável</p>
+
+  <div class="report-body">
+    {{ demanda.relatorio|linebreaksbr }}
+  </div>
+
+  <footer class="report-footer">
+    Documento demonstrativo. Revisão por servidor competente obrigatória antes de qualquer uso oficial.
+  </footer>
+</article>
+
+<section class="panel detail-section review-panel no-print">
+  <p>
+    <a class="back-link" href="{% url 'detalhe_demanda' demanda.numero %}">
+      Voltar às evidências e ajustar
+    </a>
+  </p>
+
+  <label class="checkbox-field">
+    <input type="checkbox" id="confirmar-revisao">
+    Confirmo que revisei o relatório e conferi as informações apresentadas.
+  </label>
+
+  <div class="button-wrap">
+    <button
+      class="btn btn-primary"
+      type="button"
+      id="btn-continuar-assinatura"
+      disabled
+    >
+      Continuar para Assinatura
+    </button>
+  </div>
+</section>
+
+<script>
+  (() => {
+    const checkboxRevisao = document.getElementById("confirmar-revisao");
+    const botaoAssinatura = document.getElementById("btn-continuar-assinatura");
+
+    if (!checkboxRevisao || !botaoAssinatura) return;
+
+    checkboxRevisao.addEventListener("change", () => {
+      botaoAssinatura.disabled = !checkboxRevisao.checked;
+    });
+  })();
+</script>
 {% endblock %}

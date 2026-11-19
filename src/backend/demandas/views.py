@@ -369,16 +369,30 @@ def homologar_demanda(request, numero):
 
 
 @login_required
-@user_passes_test(eh_gerente)
 def gerar_relatorio(request, numero):
-    demanda = get_object_or_404(Demanda, numero=numero)
-    if not demanda.homologada:
-        messages.error(request, "O relatório só pode ser gerado após a homologação.")
-        return redirect("detalhe_demanda", numero=numero)
+    gerente = eh_gerente(request.user)
+
+    if gerente:
+        demanda = get_object_or_404(Demanda, numero=numero)
+
+        if not demanda.homologada:
+            messages.error(request, "O relatório só pode ser gerado após a homologação.")
+            return redirect("detalhe_demanda", numero=numero)
+    else:
+        demanda = demanda_do_fiscal(request.user, numero)
+
+        if demanda.status != "andamento" or demanda.homologada:
+            messages.error(
+                request,
+                "A prévia do relatório só está disponível durante a fiscalização."
+            )
+            return redirect("detalhe_demanda", numero=numero)
+
     checklist_texto = "\n".join(
         f"- {item.item}: {item.get_resposta_display() if item.resposta else 'Sem resposta'}"
         for item in demanda.itens_checklist.all()
     )
+
     demanda.relatorio = (
         "RELATÓRIO TÉCNICO SANITÁRIO - RASCUNHO DEMONSTRATIVO\n"
         f"Demanda: {demanda.numero}\nProcesso SEI: {demanda.processo_sei}\n"
@@ -388,8 +402,16 @@ def gerar_relatorio(request, numero):
         f"Anotações: {demanda.anotacoes}\n\n"
         "Documento demonstrativo. Deve ser revisado por servidor competente."
     )
-    demanda.save()
-    return render(request, "demandas/relatorio.html", {"demanda": demanda, "gerente": True})
+
+    if gerente:
+        demanda.save(update_fields=["relatorio"])
+
+    return render(
+        request,
+        "demandas/relatorio.html",
+        {"demanda": demanda, "gerente": gerente}
+    )
+
 
 
 @login_required

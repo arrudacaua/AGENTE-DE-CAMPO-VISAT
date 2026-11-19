@@ -10,7 +10,10 @@
     <section class="panel action-panel"><div class="panel-heading"><div><span class="section-eyebrow">ÁREA DO FISCAL</span><h2>{% if demanda.status == 'aberta' %}Iniciar fiscalização{% else %}Continuar fiscalização{% endif %}</h2></div></div>
     <p>{% if demanda.status == 'aberta' %}Inicie para abrir o checklist e registrar a inspeção.{% else %}Retome o checklist com as respostas já salvas.{% endif %}</p>
     <div class="button-wrap"><form method="post" action="{% url 'iniciar_demanda' demanda.numero %}">{% csrf_token %}<button class="btn btn-primary" type="submit">{% if demanda.status == 'aberta' %}Iniciar Fiscalização{% else %}Continuar Fiscalização{% endif %}</button></form>
-    {% if demanda.status == 'andamento' %}<a class="btn btn-secondary" href="{% url 'adicionar_evidencia' demanda.numero %}">Registrar evidência</a>{% endif %}</div></section>
+    {% if demanda.status == 'andamento' %}
+    <a class="btn btn-secondary" href="{% url 'adicionar_evidencia' demanda.numero %}">Registrar evidência</a>
+    <a class="btn btn-secondary" href="{% url 'gerar_relatorio' demanda.numero %}">Revisar relatório</a>
+    {% endif %}</div></section>
     {% endif %}
     {% if demanda.assinatura_confirmada %}
     <section class="panel detail-section">

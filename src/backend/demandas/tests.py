@@ -114,7 +114,7 @@ class FluxoFiscalTests(TestCase):
 
     def test_acesso_outro_fiscal_e_anonimo(self):
         outro = self.criar(self.b, 'andamento')
-        for acao in ['detalhe_demanda', 'checklist', 'adicionar_evidencia', 'iniciar_demanda', 'concluir_demanda']:
+        for acao in ['detalhe_demanda', 'checklist', 'adicionar_evidencia', 'iniciar_demanda', 'concluir_demanda', 'gerar_relatorio']:
             for method in ['get', 'post']:
                 r = getattr(self.client, method)(self.url(acao, outro))
                 self.assertIn(r.status_code, [404, 405])
@@ -123,6 +123,18 @@ class FluxoFiscalTests(TestCase):
             self.assertEqual(anon.get(self.url(acao)).status_code, 302)
         self.client.force_login(self.gerente)
         self.assertEqual(self.client.post(self.url('iniciar_demanda')).status_code, 403)
+
+    def test_fiscal_responsavel_visualiza_previa_sem_salvar_relatorio(self):
+        self.d.status = 'andamento'
+        self.d.save(update_fields=['status'])
+
+        resposta = self.client.get(self.url('gerar_relatorio'))
+
+        self.assertEqual(resposta.status_code, 200)
+        self.assertContains(resposta, 'RELATÓRIO TÉCNICO SANITÁRIO')
+
+        self.d.refresh_from_db()
+        self.assertEqual(self.d.relatorio, '')
 
     def test_iniciar_post_csrf_retomar_sem_duplicar(self):
         self.assertEqual(self.client.get(self.url('iniciar_demanda')).status_code, 405)
