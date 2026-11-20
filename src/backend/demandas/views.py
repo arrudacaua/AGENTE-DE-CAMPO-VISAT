@@ -15,6 +15,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from .forms import DemandaForm, LocalizacaoForm, RespostasChecklistForm, EvidenciaForm, AtribuirFiscalForm
 from .constants import ITENS_PADRAO
 from .models import Demanda, ItemChecklist, Evidencia
+from .indicadores import calcular_indicadores
 
 
 
@@ -82,6 +83,7 @@ def inicio(request):
             pct_andamento=round(andamento * 100 / total) if total else 0,
             por_distrito=distritos,
             por_prioridade=qs.values("prioridade").annotate(total=Count("numero")).order_by("prioridade"))
+        contexto["ind"] = calcular_indicadores(qs)
     else:
         ativas = qs.filter(status__in=["aberta", "andamento"])
         contexto.update(ativas=ativas.count(), urgente=ativas.order_by("prazo", "numero").first())
