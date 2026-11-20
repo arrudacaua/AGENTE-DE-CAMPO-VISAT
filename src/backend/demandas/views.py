@@ -14,6 +14,7 @@ from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect, render
 from .forms import DemandaForm, LocalizacaoForm, RespostasChecklistForm, EvidenciaForm, AtribuirFiscalForm
 from .constants import ITENS_PADRAO
+from .relatorio_ia import montar_rascunho
 from .models import Demanda, ItemChecklist, Evidencia
 
 
@@ -388,20 +389,7 @@ def gerar_relatorio(request, numero):
             )
             return redirect("detalhe_demanda", numero=numero)
 
-    checklist_texto = "\n".join(
-        f"- {item.item}: {item.get_resposta_display() if item.resposta else 'Sem resposta'}"
-        for item in demanda.itens_checklist.all()
-    )
-
-    demanda.relatorio = (
-        "RELATÓRIO TÉCNICO SANITÁRIO - RASCUNHO DEMONSTRATIVO\n"
-        f"Demanda: {demanda.numero}\nProcesso SEI: {demanda.processo_sei}\n"
-        f"Descrição: {demanda.descricao}\nEndereço: {demanda.endereco}, "
-        f"{demanda.bairro} - {demanda.distrito}\nFiscal: {demanda.fiscal}\n"
-        f"Prazo: {demanda.prazo}\n\nChecklist:\n{checklist_texto}\n\n"
-        f"Anotações: {demanda.anotacoes}\n\n"
-        "Documento demonstrativo. Deve ser revisado por servidor competente."
-    )
+    demanda.relatorio = montar_rascunho(demanda)
 
     if gerente:
         demanda.save(update_fields=["relatorio"])
