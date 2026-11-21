@@ -21,6 +21,26 @@
       {% for item in por_distrito %}<div class="bar-item"><div class="bar-top"><span>{{ item.distrito|default:"Não informado" }}</span><strong>{{ item.total }}</strong></div><div class="bar-track"><span class="bar-fill" style="width:{{ item.percentual|default:0 }}%"></span></div></div>{% empty %}<div class="empty-compact">Os distritos aparecerão aqui quando houver demandas.</div>{% endfor %}
     </div><div class="priority-section"><span class="section-eyebrow">POR PRIORIDADE</span><div class="priority-chips">{% for item in por_prioridade %}<span class="priority-chip priority-{{ item.prioridade }}">{{ item.prioridade|title }} <strong>{{ item.total }}</strong></span>{% empty %}<span class="muted">Sem dados ainda</span>{% endfor %}</div></div></article>
   </section>
+  <style>
+    .metric-icon-red{background:#4a1d2a;color:#ff8a96}.metric-number-red{color:#ff6b7a}.dot-red{background:#ef4444}
+    .metric-icon-amber{background:#4a3613;color:#fbbf24}.metric-number-amber{color:#fbbf24}.dot-amber{background:#f59e0b}
+    .ind-carga{margin-bottom:20px;padding:23px 24px}.ind-tag{font-size:11px;font-weight:700;color:#ef4444;margin-left:6px}
+    .ind-fill-alert{background:#ef4444!important}
+    .ind-ociosos{margin-top:14px;font-size:14px}
+    @media(max-width:800px){.ind-carga{padding:18px}}
+  </style>
+  <section id="indicadores-operacionais" aria-label="Indicadores operacionais">
+    <div class="metrics-grid">
+      <div class="metric-card"><span class="metric-icon metric-icon-red"><svg class="icon"><use href="#i-alert"></use></svg></span><span class="metric-label">Demandas atrasadas</span><strong class="metric-number metric-number-red">{{ ind.atrasadas|stringformat:"02d" }}</strong><span class="metric-hint"><span class="dot dot-red"></span> Prazo vencido</span></div>
+      <div class="metric-card"><span class="metric-icon metric-icon-amber"><svg class="icon"><use href="#i-calendar"></use></svg></span><span class="metric-label">Vencem em até {{ ind.dias_alerta }} dias</span><strong class="metric-number metric-number-amber">{{ ind.vencendo|stringformat:"02d" }}</strong><span class="metric-hint"><span class="dot dot-amber"></span> Prazo próximo</span></div>
+      <div class="metric-card"><span class="metric-icon metric-icon-violet"><svg class="icon"><use href="#i-shield"></use></svg></span><span class="metric-label">Aguardando homologação</span><strong class="metric-number">{{ ind.aguardando_homologacao|stringformat:"02d" }}</strong><span class="metric-hint">Concluídas pelo fiscal</span></div>
+      <div class="metric-card"><span class="metric-icon metric-icon-neutral"><svg class="icon"><use href="#i-user"></use></svg></span><span class="metric-label">Sem fiscal atribuído</span><strong class="metric-number">{{ ind.sem_fiscal|stringformat:"02d" }}</strong><span class="metric-hint"><span class="dot dot-neutral"></span> Ativas sem responsável</span></div>
+    </div>
+    <article class="panel ind-carga"><div class="panel-heading"><div><span class="section-eyebrow">CARGA DE TRABALHO</span><h2>Demandas ativas por distrito</h2></div></div><div class="bar-stack">
+      {% for c in ind.carga_distritos %}<div class="bar-item"><div class="bar-top"><span>{{ c.distrito }}{% if c.sobrecarregado %}<span class="ind-tag">SOBRECARREGADO</span>{% endif %}</span><strong>{{ c.ativas }}</strong></div><div class="bar-track"><span class="bar-fill {% if c.sobrecarregado %}ind-fill-alert{% endif %}" style="width:{{ c.percentual }}%"></span></div></div>{% empty %}<div class="empty-compact">Nenhuma demanda ativa no momento.</div>{% endfor %}
+    </div>
+    <p class="ind-ociosos"><strong>Fiscais sem demanda ativa:</strong> {% if ind.fiscais_ociosos %}{{ ind.fiscais_ociosos|join:", " }}{% else %}nenhum{% endif %}.<br><small>Distrito sobrecarregado: {{ ind.limite_sobrecarga }} ou mais demandas ativas.</small></p></article>
+  </section>
 {% else %}
   <section class="fiscal-highlight"><div class="fiscal-highlight-glow"></div><div class="fiscal-highlight-content"><span class="eyebrow">SEU PAINEL DE CAMPO</span><h2>Seu próximo passo<br><span>começa aqui.</span></h2><p>Selecione uma demanda para consultar o endereço, preencher o checklist e registrar suas atividades.</p><a class="btn btn-primary" href="#demandas">Ver minhas demandas <svg class="icon"><use href="#i-arrow"></use></svg></a></div><div class="fiscal-highlight-art" aria-hidden="true"><svg class="icon"><use href="#i-target"></use></svg></div></section>
   <section class="metrics-grid metrics-grid-fiscal" aria-label="Resumo das minhas demandas"><div class="metric-card"><span class="metric-icon metric-icon-violet"><svg class="icon"><use href="#i-clipboard"></use></svg></span><span class="metric-label">Demandas ativas</span><strong class="metric-number">{{ ativas|stringformat:"02d" }}</strong><span class="metric-hint">Aguardando ou em andamento</span></div><div class="metric-card"><span class="metric-icon metric-icon-blue"><svg class="icon"><use href="#i-calendar"></use></svg></span><span class="metric-label">Próximo prazo</span>{% if urgente %}<strong class="metric-number metric-date">{{ urgente.prazo|date:"d/m/Y" }}</strong><span class="metric-hint">Demanda #{{ urgente.numero }}</span>{% else %}<strong class="metric-number metric-date">—</strong><span class="metric-hint">Nenhuma demanda ativa</span>{% endif %}</div></section>
