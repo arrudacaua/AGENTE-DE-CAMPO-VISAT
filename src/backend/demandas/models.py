@@ -44,6 +44,8 @@ class Demanda(models.Model):
     assinatura_em = models.DateTimeField("Data e hora da assinatura", null=True, blank=True)
     homologada = models.BooleanField("Homologada pela Gerência", default=False)
     relatorio = models.TextField("Relatório técnico", blank=True)
+    relatorio_revisado = models.BooleanField("Relatório revisado pelo fiscal", default=False)
+    relatorio_revisao = models.PositiveIntegerField("Revisão dos dados usada no relatório", default=0)
     relatorio_vinculado_sei = models.BooleanField("Vínculo conceitual com SEI", default=False)
 
     class Meta:

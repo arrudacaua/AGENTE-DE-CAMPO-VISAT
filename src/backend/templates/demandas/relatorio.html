@@ -5,125 +5,87 @@
 
 {% block content %}
 <style>
-  .paper-report.folha-a4 {
-    width: 210mm;
-    min-height: 297mm;
-    max-width: 100%;
-    box-sizing: border-box;
-  }
-
-  .review-panel {
-    max-width: 800px;
-    margin: 20px auto 0;
-  }
-
-  .review-panel .btn:disabled {
-    opacity: .45;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-  }
-
-  @media print {
-    .paper-report.folha-a4 {
-      width: auto;
-      min-height: 0;
-    }
-  }
+  .paper-report.folha-a4 { width: 210mm; min-height: 297mm; max-width: 100%; box-sizing: border-box; }
+  .review-panel { max-width: 800px; margin: 20px auto 0; }
+  .review-panel .btn:disabled { opacity: .45; cursor: not-allowed; }
+  @media print { .paper-report.folha-a4 { width: auto; min-height: 0; } }
 </style>
 
 <div class="back-line no-print">
   <a class="back-link" href="{% url 'detalhe_demanda' demanda.numero %}">
-    <svg class="icon"><use href="#i-back"></use></svg>
-    Voltar à demanda
+    <svg class="icon"><use href="#i-back"></use></svg> Voltar à demanda
   </a>
 </div>
 
 <section class="page-heading no-print">
   <div>
-    <div class="eyebrow">
-      <span class="eyebrow-line"></span> DOCUMENTAÇÃO
-    </div>
+    <div class="eyebrow"><span class="eyebrow-line"></span> DOCUMENTAÇÃO</div>
     <h1>Relatório técnico<span class="accent-dot">.</span></h1>
-    <p>Prévia do documento para revisão antes da assinatura.</p>
+    <p>Prévia do documento para revisão do fiscal antes da assinatura.</p>
   </div>
-
+  {% if demanda.relatorio %}
   <button class="btn btn-primary" type="button" onclick="window.print()">
-    <svg class="icon"><use href="#i-download"></use></svg>
-    Imprimir / salvar PDF
+    <svg class="icon"><use href="#i-download"></use></svg> Imprimir / salvar PDF
   </button>
+  {% endif %}
 </section>
 
 <div class="report-warning no-print">
   <svg class="icon"><use href="#i-info"></use></svg>
-  <span>
-    <strong>Rascunho gerado automaticamente</strong> a partir do checklist, das evidências e das anotações.
-    Revise todas as informações antes de qualquer assinatura.
+  <span><strong>Rascunho automático — revise antes de assinar.</strong>
+    O texto é montado a partir dos dados, checklist, anotações e descrições registradas.
+    Este gerador local não interpreta o conteúdo de fotos ou áudios nem substitui a análise do fiscal.
   </span>
 </div>
 
+{% if pode_gerar %}
+{% if not demanda.relatorio or not relatorio_atual %}
+<section class="panel detail-section review-panel no-print">
+  {% if demanda.relatorio and not relatorio_atual %}
+    <p role="status">As evidências ou respostas do checklist mudaram depois da geração. Gere uma nova versão antes de confirmar a revisão.</p>
+  {% else %}
+    <p>O rascunho usará os dados da demanda, as respostas do checklist, as anotações e as descrições registradas nas evidências. Os arquivos de foto e áudio não são interpretados pelo gerador local.</p>
+  {% endif %}
+  <form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="acao" value="gerar">
+    <button class="btn btn-primary" type="submit">Gerar rascunho</button>
+  </form>
+</section>
+{% endif %}
+{% endif %}
+
+{% if demanda.relatorio %}
 <article class="paper-report folha-a4">
   <header class="report-letterhead">
-    <div class="brand-emblem">
-      <svg class="icon"><use href="#i-eye"></use></svg>
-    </div>
-
-    <div>
-      <strong>VISAT · AGENTE DE CAMPO</strong>
-      <small>Relatório de fiscalização · Rascunho</small>
-    </div>
-
-    <span>
-      #{% if demanda.numero %}{{ demanda.numero|stringformat:"03d" }}{% endif %}
-    </span>
+    <div class="brand-emblem"><svg class="icon"><use href="#i-eye"></use></svg></div>
+    <div><strong>VISAT · AGENTE DE CAMPO</strong><small>Relatório de fiscalização · Rascunho automático</small></div>
+    <span>#{{ demanda.numero|stringformat:"03d" }}</span>
   </header>
-
   <h2>Relatório técnico sanitário</h2>
   <p class="report-subtitle">Prévia para conferência do fiscal responsável</p>
-
-  <div class="report-body">
-    {{ demanda.relatorio|linebreaksbr }}
-  </div>
-
-  <footer class="report-footer">
-    Rascunho gerado automaticamente. Revisão obrigatória antes de qualquer uso oficial.
-  </footer>
+  <div class="report-body">{{ demanda.relatorio|linebreaksbr }}</div>
+  <footer class="report-footer">Rascunho automático. Os fatos e registros devem ser validados pelo fiscal antes da assinatura.</footer>
 </article>
+{% endif %}
 
+{% if pode_confirmar_revisao %}
 <section class="panel detail-section review-panel no-print">
-  <p>
-    <a class="back-link" href="{% url 'detalhe_demanda' demanda.numero %}">
-      Voltar às evidências e ajustar
-    </a>
-  </p>
-
-  <label class="checkbox-field">
-    <input type="checkbox" id="confirmar-revisao">
-    Confirmo que revisei o relatório e conferi as informações apresentadas.
-  </label>
-
-  <div class="button-wrap">
-    <button
-      class="btn btn-primary"
-      type="button"
-      id="btn-continuar-assinatura"
-      disabled
-    >
-      Continuar para Assinatura
-    </button>
-  </div>
+  <p>Leia o documento acima e retorne às evidências se precisar corrigir os registros.</p>
+  <form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="acao" value="confirmar_revisao">
+    <label class="checkbox-field">
+      <input type="checkbox" name="confirmar_revisao" value="sim" required>
+      <span>Confirmo que revisei o relatório e conferi as informações e sugestões apresentadas.</span>
+    </label>
+    <button class="btn btn-primary" type="submit">Confirmar revisão e liberar assinatura</button>
+  </form>
 </section>
-
-<script>
-  (() => {
-    const checkboxRevisao = document.getElementById("confirmar-revisao");
-    const botaoAssinatura = document.getElementById("btn-continuar-assinatura");
-
-    if (!checkboxRevisao || !botaoAssinatura) return;
-
-    checkboxRevisao.addEventListener("change", () => {
-      botaoAssinatura.disabled = !checkboxRevisao.checked;
-    });
-  })();
-</script>
+{% elif not gerente and demanda.relatorio_revisado and relatorio_atual %}
+<section class="panel detail-section review-panel no-print" role="status">
+  <p>Revisão confirmada. A assinatura está liberada na tela da demanda.</p>
+  <a class="btn btn-primary" href="{% url 'detalhe_demanda' demanda.numero %}">Continuar para assinatura</a>
+</section>
+{% endif %}
 {% endblock %}

@@ -323,34 +323,61 @@ def concluir_demanda(request, numero):
     demanda = demanda_do_fiscal(request.user, numero)
     if not em_edicao(request, demanda):
         return redirect("detalhe_demanda", numero=numero)
+
+    if (
+        not demanda.relatorio
+        or not demanda.relatorio_revisado
+        or demanda.relatorio_revisao != demanda.revisao
+    ):
+        messages.error(
+            request,
+            "Gere o rascunho e confirme a revisão do relatório antes de assinar.",
+        )
+        return redirect("detalhe_demanda", numero=numero)
+
     with transaction.atomic():
-        atualizado = Demanda.objects.filter(pk=numero, fiscal=request.user, status="andamento", homologada=False).update(revisao=F("revisao")+1)
-        if atualizado:
-            itens = list(ItemChecklist.objects.filter(demanda_id=numero))
-            completo = set(ITENS_PADRAO).issubset({i.item for i in itens}) and all(i.resposta in dict(ItemChecklist.RESPOSTAS) for i in itens)
-            if not completo:
-                messages.error(request, "Responda todos os seis itens do checklist antes de concluir.")
-                transaction.set_rollback(True)
-            elif request.POST.get("confirmar") != "sim":
-                messages.error(request, "Confirme a revisão dos registros para concluir.")
-                transaction.set_rollback(True)
-            else:
-                nome_assinante = (
-                    request.user.get_full_name().strip()
-                    or request.user.get_username()
-                )
+        atualizado = Demanda.objects.filter(
+            pk=numero,
+            fiscal=request.user,
+            status="andamento",
+            homologada=False,
+            relatorio_revisado=True,
+            relatorio_revisao=F("revisao"),
+        ).exclude(relatorio="").update(revisao=F("revisao") + 1)
 
-                Demanda.objects.filter(pk=numero).update(
-                    status="concluida",
-                    assinatura_confirmada=True,
-                    assinatura_nome=nome_assinante,
-                    assinatura_em=timezone.now(),
-                )
+        if not atualizado:
+            messages.error(
+                request,
+                "Os dados da fiscalização mudaram. Gere e revise o relatório novamente.",
+            )
+            return redirect("detalhe_demanda", numero=numero)
 
-                messages.success(
-                    request,
-                    "Fiscalização assinada e concluída. Aguardando homologação da Gerência VISAT."
-                )
+        itens = list(ItemChecklist.objects.filter(demanda_id=numero))
+        completo = (
+            set(ITENS_PADRAO).issubset({i.item for i in itens})
+            and all(i.resposta in dict(ItemChecklist.RESPOSTAS) for i in itens)
+        )
+        if not completo:
+            messages.error(request, "Responda todos os seis itens do checklist antes de concluir.")
+            transaction.set_rollback(True)
+        elif request.POST.get("confirmar") != "sim":
+            messages.error(request, "Confirme a assinatura para concluir.")
+            transaction.set_rollback(True)
+        else:
+            nome_assinante = (
+                request.user.get_full_name().strip()
+                or request.user.get_username()
+            )
+            Demanda.objects.filter(pk=numero).update(
+                status="concluida",
+                assinatura_confirmada=True,
+                assinatura_nome=nome_assinante,
+                assinatura_em=timezone.now(),
+            )
+            messages.success(
+                request,
+                "Fiscalização assinada e concluída. Aguardando homologação da Gerência VISAT.",
+            )
     return redirect("detalhe_demanda", numero=numero)
 
 
@@ -370,34 +397,101 @@ def homologar_demanda(request, numero):
 
 
 @login_required
+@require_http_methods(["GET", "POST"])
 def gerar_relatorio(request, numero):
     gerente = eh_gerente(request.user)
 
     if gerente:
-        demanda = get_object_or_404(Demanda, numero=numero)
-
-        if not demanda.homologada:
-            messages.error(request, "O relatório só pode ser gerado após a homologação.")
+        if request.method == "POST":
+            raise PermissionDenied("A revisão do relatório é responsabilidade do fiscal.")
+        demanda = get_object_or_404(
+            Demanda,
+            numero=numero,
+            homologada=True,
+        )
+        if not demanda.relatorio:
+            messages.info(request, "O relatório ainda não foi gerado pelo fiscal.")
             return redirect("detalhe_demanda", numero=numero)
     else:
         demanda = demanda_do_fiscal(request.user, numero)
-
         if demanda.status != "andamento" or demanda.homologada:
             messages.error(
                 request,
-                "A prévia do relatório só está disponível durante a fiscalização."
+                "A geração e revisão do relatório só estão disponíveis durante a fiscalização.",
             )
             return redirect("detalhe_demanda", numero=numero)
 
-    demanda.relatorio = montar_rascunho(demanda)
+    if request.method == "POST":
+        acao = request.POST.get("acao")
 
-    if gerente:
-        demanda.save(update_fields=["relatorio"])
+        if gerente:
+            raise PermissionDenied("A revisão do relatório é responsabilidade do fiscal.")
 
+        if acao == "gerar":
+            revisao_origem = demanda.revisao
+            rascunho = montar_rascunho(demanda)
+
+            atualizado = Demanda.objects.filter(
+                pk=numero,
+                fiscal=request.user,
+                status="andamento",
+                homologada=False,
+                revisao=revisao_origem,
+            ).update(
+                relatorio=rascunho,
+                relatorio_revisado=False,
+                relatorio_revisao=revisao_origem,
+            )
+            if not atualizado:
+                messages.error(
+                    request,
+                    "Os dados mudaram durante a geração. Tente gerar o relatório novamente.",
+                )
+                return redirect("gerar_relatorio", numero=numero)
+            messages.success(request, "Rascunho gerado. Revise o documento antes de assinar.")
+
+        elif acao == "confirmar_revisao":
+            if request.POST.get("confirmar_revisao") != "sim":
+                messages.error(request, "Marque a confirmação de revisão para continuar.")
+                return redirect("gerar_relatorio", numero=numero)
+
+            atualizado = Demanda.objects.filter(
+                pk=numero,
+                fiscal=request.user,
+                status="andamento",
+                homologada=False,
+                relatorio_revisao=F("revisao"),
+            ).exclude(relatorio="").update(relatorio_revisado=True)
+            if atualizado:
+                messages.success(request, "Revisão do relatório confirmada. A assinatura foi liberada.")
+                return redirect("detalhe_demanda", numero=numero)
+            messages.error(
+                request,
+                "O relatório está desatualizado ou ainda não foi gerado. Gere um novo rascunho.",
+            )
+        else:
+            messages.error(request, "Ação de relatório inválida.")
+
+        return redirect("gerar_relatorio", numero=numero)
+
+    relatorio_atual = bool(
+        demanda.relatorio
+        and demanda.relatorio_revisao == demanda.revisao
+    )
     return render(
         request,
         "demandas/relatorio.html",
-        {"demanda": demanda, "gerente": gerente}
+        {
+            "demanda": demanda,
+            "gerente": gerente,
+            "relatorio_atual": relatorio_atual,
+            "pode_gerar": not gerente,
+            "pode_confirmar_revisao": (
+                not gerente
+                and relatorio_atual
+                and not demanda.relatorio_revisado
+            ),
+        },
     )
 
 
