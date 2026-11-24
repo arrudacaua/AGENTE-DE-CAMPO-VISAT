@@ -71,6 +71,8 @@ jobs:
           PY
       - name: Gravar navegador e validar historias
         run: python ../../scripts/entrega03/gravar_testes.py
+      - name: Validar foto offline e reenvio sem duplicação (US07)
+        run: python ../../scripts/us07/testar_foto_offline.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:

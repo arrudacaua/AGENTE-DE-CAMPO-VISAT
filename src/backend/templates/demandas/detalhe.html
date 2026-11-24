@@ -94,6 +94,7 @@
 
                 <div>
                     <strong>{{ e.get_tipo_display }}</strong>
+                    {% if e.identificador_offline %}<span>Sincronizado</span>{% endif %}
 
                     {% if e.descricao %}
                         <p>{{ e.descricao|linebreaksbr }}</p>

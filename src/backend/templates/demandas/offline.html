@@ -1,0 +1,16 @@
+{% load static %}
+<!doctype html><html lang="pt-br"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fotos da fiscalização | VISAT</title>
+<link rel="stylesheet" href="{% static 'demandas/css/app.css' %}">
+<script defer src="{% static 'demandas/js/offline.js' %}"></script></head>
+<body><main class="page-content"><h1>Fotos da fiscalização</h1>
+<section class="panel" id="fotos-locais" data-offline>
+<strong data-conexao>Modo offline</strong><p data-resumo></p><ul data-fotos></ul>
+<p role="status" data-aviso></p>
+<form id="foto-offline" hidden>
+<label>Foto <input type="file" name="arquivo" accept="image/*" required></label>
+<label>Descrição <textarea name="descricao"></textarea></label>
+<button class="btn btn-primary">Salvar foto</button>
+</form><a href="" class="text-action">Reabrir demanda</a>
+</section></main></body></html>

@@ -1,7 +1,12 @@
 from django.urls import path
+from django.views.generic import TemplateView
 from . import views
+from .offline import sincronizar_foto
 
 urlpatterns = [
+    path("visat-sw.js", TemplateView.as_view(template_name="demandas/worker.js", content_type="text/javascript"), name="offline_worker"),
+    path("offline/foto/", TemplateView.as_view(template_name="demandas/offline.html"), name="offline_foto"),
+    path("demanda/<int:numero>/sincronizar-foto/", sincronizar_foto, name="sincronizar_foto"),
     path("", views.inicio, name="inicio"),
     path("login/", views.login_view, name="login"),
     path("sair/", views.logout_view, name="logout"),
