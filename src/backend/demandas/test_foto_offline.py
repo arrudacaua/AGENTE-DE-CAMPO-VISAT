@@ -44,3 +44,19 @@ class FotoOfflineTests(TestCase):
         self.client.logout()
         self.assertEqual(self.enviar().status_code, 401)
         self.assertFalse(Evidencia.objects.exists())
+
+    def test_resposta_concorrente_e_reenvio_preservam_edicao_posterior(self):
+        item = self.demanda.itens_checklist.create(item="Uso de EPI", resposta="conforme")
+        url = reverse("sincronizar_resposta", args=[self.demanda.pk])
+        dados = {"fiscal": self.fiscal.pk, "identificador": self.identificador,
+                 "item": item.pk, "anterior": "", "resposta": "nao_conforme"}
+        conflito = self.client.post(url, dados)
+        self.assertEqual(conflito.status_code, 409)
+        self.assertEqual(conflito.json()["atual"], "conforme")
+        dados["anterior"] = "conforme"
+        self.assertEqual(self.client.post(url, dados).json()["resposta"], "nao_conforme")
+        item.resposta = "conforme"
+        item.save()
+        self.assertEqual(self.client.post(url, dados).json()["resposta"], "conforme")
+        self.demanda.refresh_from_db()
+        self.assertEqual(self.demanda.revisao, 1)

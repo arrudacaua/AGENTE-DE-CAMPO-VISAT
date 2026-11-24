@@ -1,0 +1,135 @@
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    // Gravador de áudio
+    const tipoSelect = document.getElementById("id_tipo");
+    const arquivoInput = document.getElementById("id_arquivo");
+    const gravador = document.getElementById("gravador-audio");
+    const btnGravar = document.getElementById("btn-gravar");
+    const btnParar = document.getElementById("btn-parar");
+    const audioStatus = document.getElementById("audio-status");
+    const previewContainer = document.getElementById("audio-preview-container");
+    const audioPreview = document.getElementById("audio-preview");
+
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let audioStream = null;
+    let audioUrl = null;
+
+    function atualizarGravador() {
+        const selecionouAudio = tipoSelect.value === "audio";
+        gravador.hidden = !selecionouAudio;
+
+        if (selecionouAudio) {
+            arquivoInput.accept = "audio/*";
+        } else {
+            arquivoInput.accept = "image/*,video/*,audio/*";
+        }
+    }
+
+    tipoSelect.addEventListener("change", atualizarGravador);
+    atualizarGravador();
+
+    btnGravar.addEventListener("click", async function () {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) {
+            audioStatus.textContent = "Seu navegador não oferece suporte à gravação de áudio.";
+            return;
+        }
+
+        try {
+            audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+            let opcoes = {};
+            const formatos = [
+                "audio/webm;codecs=opus",
+                "audio/webm",
+                "audio/ogg;codecs=opus",
+                "audio/mp4"
+            ];
+
+            for (const formato of formatos) {
+                if (MediaRecorder.isTypeSupported(formato)) {
+                    opcoes.mimeType = formato;
+                    break;
+                }
+            }
+
+            mediaRecorder = new MediaRecorder(audioStream, opcoes);
+            audioChunks = [];
+
+            mediaRecorder.addEventListener("dataavailable", function (event) {
+                if (event.data.size > 0) {
+                    audioChunks.push(event.data);
+                }
+            });
+
+            mediaRecorder.addEventListener("stop", function () {
+                const mimeType = mediaRecorder.mimeType || "audio/webm";
+                const extensoes = {
+                    "audio/webm": "webm",
+                    "audio/ogg": "ogg",
+                    "audio/mp4": "m4a",
+                    "audio/mpeg": "mp3",
+                    "audio/wav": "wav"
+                };
+
+                const tipoMime = mimeType.split(";")[0];
+                const extensao = extensoes[tipoMime];
+
+                if (!extensao) {
+                    audioStatus.textContent = "Formato de áudio não suportado para envio.";
+                    audioStream.getTracks().forEach(track => track.stop());
+                    return;
+                }
+
+                const blob = new Blob(audioChunks, { type: mimeType });
+                const arquivo = new File(
+                    [blob],
+                    "gravacao." + extensao,
+                    { type: tipoMime }
+                );
+
+                const transferencia = new DataTransfer();
+                transferencia.items.add(arquivo);
+                arquivoInput.files = transferencia.files;
+
+                if (audioUrl) {
+                    URL.revokeObjectURL(audioUrl);
+                }
+
+                audioUrl = URL.createObjectURL(blob);
+                audioPreview.src = audioUrl;
+                previewContainer.hidden = false;
+
+                audioStatus.textContent = "Gravação concluída. Áudio pronto para ser enviado.";
+                audioStream.getTracks().forEach(track => track.stop());
+            });
+
+            mediaRecorder.start();
+
+            btnGravar.disabled = true;
+            btnParar.disabled = false;
+            audioStatus.textContent = "Gravando áudio...";
+
+            previewContainer.hidden = true;
+
+        } catch (error) {
+            audioStatus.textContent = "Não foi possível acessar o microfone. Verifique a permissão do navegador.";
+        }
+    });
+
+    btnParar.addEventListener("click", function () {
+        if (mediaRecorder && mediaRecorder.state === "recording") {
+            mediaRecorder.stop();
+            btnGravar.disabled = false;
+            btnParar.disabled = true;
+        }
+    });
+
+    tipoSelect.form.addEventListener("submit", function (event) {
+        if (tipoSelect.value === "audio" && (!arquivoInput.files || arquivoInput.files.length === 0)) {
+            event.preventDefault();
+            audioStatus.textContent = "Grave um áudio ou selecione um arquivo de áudio antes de salvar.";
+        }
+    });
+});
+</script>

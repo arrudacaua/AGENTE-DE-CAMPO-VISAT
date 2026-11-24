@@ -1,0 +1,16 @@
+<div id="gravador-audio" class="field-group field-span-2" hidden>
+    <label>Gravador de áudio</label>
+    <p class="field-help">Grave um áudio diretamente pelo navegador. Depois, você poderá ouvi-lo antes de salvar.</p>
+
+    <div class="form-actions">
+        <button type="button" class="btn btn-primary" id="btn-gravar">Iniciar gravação</button>
+        <button type="button" class="btn btn-secondary" id="btn-parar" disabled>Parar gravação</button>
+    </div>
+
+    <p id="audio-status" class="field-help" aria-live="polite">Selecione o tipo Áudio para utilizar o gravador.</p>
+
+    <div id="audio-preview-container" hidden>
+        <audio id="audio-preview" controls></audio>
+        <p class="field-help">O áudio será enviado junto com o formulário quando você clicar em Salvar registro.</p>
+    </div>
+</div>

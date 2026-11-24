@@ -1,11 +1,11 @@
 {% load static %}
 const shell = "{% url 'offline_foto' %}";
 const assets = [shell, "{% static 'demandas/js/offline.js' %}", "{% static 'demandas/css/app.css' %}"];
-const cacheName = "visat-fotos-v1";
+const cacheName = "visat-campo-v2";
 self.addEventListener("install", event => event.waitUntil(
   caches.open(cacheName).then(cache => cache.addAll(assets)).then(() => self.skipWaiting())
 ));
-self.addEventListener("activate", event => event.waitUntil(self.clients.claim()));
+self.addEventListener("activate", event => event.waitUntil(caches.delete("visat-fotos-v1").then(() => self.clients.claim())));
 self.addEventListener("fetch", event => {
   const url = new URL(event.request.url);
   if (url.origin !== location.origin || event.request.method !== "GET") return;
