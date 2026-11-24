@@ -12,10 +12,28 @@ def testar(url, numero, chromium):
     descricao = f"Foto de teste US07 {uuid4()}"
     png = base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=")
     with sync_playwright() as playwright:
-        browser = playwright.chromium.launch(executable_path=chromium, args=["--use-fake-device-for-media-stream"])
+        browser = playwright.chromium.launch(executable_path=chromium)
         pasta = Path("evidencias-entrega03/US07-registros-offline")
         pasta.mkdir(parents=True, exist_ok=True)
-        context = browser.new_context(permissions=["microphone", "camera"], record_video_dir=str(pasta))
+        context = browser.new_context(record_video_dir=str(pasta))
+        # O runner não possui periféricos. Som e quadros sintéticos alimentam o MediaRecorder real.
+        context.add_init_script("""navigator.mediaDevices.getUserMedia = async constraints => {
+            if (constraints.audio) {
+                const audio = new AudioContext();
+                const oscillator = audio.createOscillator();
+                const output = audio.createMediaStreamDestination();
+                oscillator.connect(output);
+                oscillator.start();
+                await audio.resume();
+                return output.stream;
+            }
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+            const stream = canvas.captureStream(10);
+            const timer = setInterval(() => ctx.fillRect(0, 0, 20, 20), 100);
+            setTimeout(() => clearInterval(timer), 1500);
+            return stream;
+        }""")
         page = context.new_page()
         page.goto(destino)
         page.locator('[name="username"]').fill("fiscal_demo")
@@ -100,7 +118,7 @@ def testar_registros(page, context, destino, descricao, pasta):
                 const chunks = [];
                 recorder.ondataavailable = e => chunks.push(e.data);
                 const stopped = new Promise(resolve => recorder.onstop = resolve);
-                recorder.start();
+                recorder.start(100);
                 await new Promise(resolve => setTimeout(resolve, 600));
                 recorder.stop();
                 await stopped;
