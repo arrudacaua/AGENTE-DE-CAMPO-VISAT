@@ -256,7 +256,7 @@ def excluir_evidencia(request, numero, evidencia_id):
         Evidencia,
         pk=evidencia_id,
         demanda=demanda,
-        tipo__in=["foto", "video"],
+        tipo__in=["foto", "video", "anotacao"],
     )
 
     nome_tipo = evidencia.get_tipo_display()
