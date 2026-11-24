@@ -125,3 +125,8 @@ class Evidencia(models.Model):
 
     def __str__(self):
         return f"{self.get_tipo_display()} - Demanda #{self.demanda.numero}"
+
+
+class RespostaOfflineRecebida(models.Model):
+    identificador = models.UUIDField(primary_key=True)
+    item = models.ForeignKey(ItemChecklist, on_delete=models.CASCADE)
