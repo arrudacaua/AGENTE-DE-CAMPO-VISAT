@@ -86,6 +86,7 @@ class ItemChecklist(models.Model):
 
 
 class Evidencia(models.Model):
+    identificador_offline = models.UUIDField(unique=True, null=True, editable=False)
     TIPOS = [
         ("foto", "Foto"),
         ("video", "Vídeo"),

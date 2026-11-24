@@ -9,8 +9,9 @@
   <title>{% block title %}Agente de Campo | VISAT{% endblock %}</title>
   <link rel="stylesheet" href="{% static 'demandas/css/app.css' %}">
   <script defer src="{% static 'demandas/js/app.js' %}"></script>
+  <script defer src="{% static 'demandas/js/offline.js' %}"></script>
 </head>
-<body class="{% if user.is_authenticated %}app-authenticated{% else %}app-guest{% endif %}">
+<body data-fiscal="{{ user.pk|default_if_none:'' }}" class="{% if user.is_authenticated %}app-authenticated{% else %}app-guest{% endif %}">
   <!-- Conjunto local de ícones, sem dependência de CDN ou internet. -->
   <svg class="icon-defs" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
     <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
@@ -94,6 +95,7 @@
       </header>
       <main class="page-content" id="conteudo-principal">
         {% if messages %}<div class="flash-stack" aria-live="polite">{% for message in messages %}<div class="flash-message {% if message.tags %}flash-{{ message.tags }}{% endif %}"><svg class="icon"><use href="#i-info"></use></svg><span>{{ message }}</span><button type="button" class="flash-close" aria-label="Fechar aviso" data-dismiss><svg class="icon"><use href="#i-close"></use></svg></button></div>{% endfor %}</div>{% endif %}
+        {% if demanda and not gerente %}{% include "demandas/fotos_pendentes.html" %}{% endif %}
         {% block content %}{% endblock %}
         <footer class="page-footer"><span>VISAT · Agente de Campo</span><span>Ambiente de demonstração · Os dados são locais</span></footer>
       </main>
