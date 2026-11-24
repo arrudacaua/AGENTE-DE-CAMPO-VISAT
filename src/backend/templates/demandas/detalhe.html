@@ -94,9 +94,20 @@
 
                 <div>
                     <strong>{{ e.get_tipo_display }}</strong>
+                    {% if e.identificador_offline %}<span>Sincronizado</span>{% endif %}
 
                     {% if e.descricao %}
                         <p>{{ e.descricao|linebreaksbr }}</p>
+                    {% endif %}
+
+                    {% if e.tipo == 'anotacao' and not gerente and demanda.status == 'andamento' and not demanda.homologada %}
+                        <form method="post"
+                              action="{% url 'excluir_evidencia' demanda.numero e.id %}"
+                              onsubmit="return confirm('Tem certeza que deseja excluir esta anotação?');"
+                              style="margin-top: 10px;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-secondary">Excluir anotação</button>
+                        </form>
                     {% endif %}
 
                     {% if e.arquivo %}

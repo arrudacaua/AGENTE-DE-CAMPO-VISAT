@@ -1,0 +1,7 @@
+<section class="panel" id="fotos-locais" data-numero="{{ demanda.numero }}" data-editavel="{% if demanda.status == 'andamento' and not demanda.homologada %}sim{% endif %}" hidden>
+  {% if demanda.status == "andamento" %}<template data-itens data-descricao="{{ demanda.descricao }}" data-local="{{ demanda.endereco }}">{% for item in demanda.itens_checklist.all %}<span data-id="{{ item.pk }}" data-resposta="{{ item.resposta }}">{{ item.item }}</span>{% endfor %}</template>{% endif %}
+  <strong data-conexao></strong>
+  <p data-resumo></p>
+  <ul data-fotos></ul>
+  <p role="status" data-aviso></p>
+</section>

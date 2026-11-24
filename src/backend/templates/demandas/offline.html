@@ -1,0 +1,24 @@
+{% load static %}
+<!doctype html><html lang="pt-br"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fiscalização offline | VISAT</title>
+<link rel="stylesheet" href="{% static 'demandas/css/app.css' %}">
+<script defer src="{% static 'demandas/js/offline.js' %}"></script></head>
+<body><main class="page-content"><h1>Fiscalização <span data-demanda></span></h1>
+<section class="panel" id="fotos-locais" data-offline>
+<strong data-conexao>Modo offline</strong><p data-resumo></p><ul data-fotos></ul>
+<p role="status" data-aviso></p>
+<p data-identificacao></p>
+<nav hidden data-offline-nav><a class="btn btn-secondary" data-rota="">Detalhe da demanda</a>
+<a class="btn btn-secondary" data-rota="checklist/">Checklist</a>
+<a class="btn btn-secondary" data-rota="evidencia/">Registrar evidência</a></nav>
+<form id="foto-offline" class="application-form" hidden>
+<label>Tipo <select name="tipo" id="id_tipo"><option value="foto">Foto</option><option value="video">Vídeo</option><option value="audio">Áudio</option><option value="anotacao">Anotação</option></select></label>
+<label>Arquivo <input type="file" name="arquivo" id="id_arquivo" accept="image/*"></label>
+<label>Descrição <textarea name="descricao"></textarea></label>
+{% include "demandas/gravador.html" %}
+<button class="btn btn-primary">Salvar registro</button>
+</form>
+<form data-offline-checklist hidden><h2>Checklist da inspeção</h2><div data-campos></div>
+<button class="btn btn-primary">Salvar checklist</button></form>
+</section></main>{% include "demandas/gravador_script.html" %}</body></html>

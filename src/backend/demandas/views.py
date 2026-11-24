@@ -16,6 +16,7 @@ from .forms import DemandaForm, LocalizacaoForm, RespostasChecklistForm, Evidenc
 from .constants import ITENS_PADRAO
 from .relatorio_ia import montar_rascunho
 from .models import Demanda, ItemChecklist, Evidencia
+from .indicadores import calcular_indicadores
 
 
 
@@ -83,6 +84,7 @@ def inicio(request):
             pct_andamento=round(andamento * 100 / total) if total else 0,
             por_distrito=distritos,
             por_prioridade=qs.values("prioridade").annotate(total=Count("numero")).order_by("prioridade"))
+        contexto["ind"] = calcular_indicadores(qs)
     else:
         ativas = qs.filter(status__in=["aberta", "andamento"])
         contexto.update(ativas=ativas.count(), urgente=ativas.order_by("prazo", "numero").first())
@@ -254,7 +256,7 @@ def excluir_evidencia(request, numero, evidencia_id):
         Evidencia,
         pk=evidencia_id,
         demanda=demanda,
-        tipo__in=["foto", "video"],
+        tipo__in=["foto", "video", "anotacao"],
     )
 
     nome_tipo = evidencia.get_tipo_display()
@@ -478,6 +480,7 @@ def gerar_relatorio(request, numero):
         demanda.relatorio
         and demanda.relatorio_revisao == demanda.revisao
     )
+
     return render(
         request,
         "demandas/relatorio.html",
