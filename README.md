@@ -87,11 +87,11 @@ Os diagramas de atividades representam os fluxos das histórias de usuário do V
 ## 🛠️ Tecnologias
 
 <p align="center">
-  <img src="https://skillicons.dev/icons?i=html,css,js,python,mysql,git,github" />
+  <img src="https://skillicons.dev/icons?i=html,css,js,python,sqlite,git,github" />
 </p>
 
 <p align="center">
-  HTML • CSS • JavaScript • Python • MySQL • Git • GitHub
+  HTML • CSS • JavaScript • Python • SQLite • Git • GitHub
 </p>
 
 ## 📁 Estrutura do projeto
