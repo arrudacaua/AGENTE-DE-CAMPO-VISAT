@@ -193,4 +193,4 @@ As issues foram utilizadas para registrar as demandas, acompanhar seu desenvolvi
   <img src="docs/evidencias/tracker/github-issues-sprint.png" alt="Tracker de Issues do projeto VISAT" width="850">
 </p>
 
-[Acessar GitHub Issues do projeto](https://github.com/arrudacaua/AGENTE-DE-CAMPO-VISAT/issues)
+[Acessar GitHub Issues do projeto](https://github.com/arrudacaua/AGENTE-DE-CAMPO-VISAT/issues?q=is%3Aissue)
