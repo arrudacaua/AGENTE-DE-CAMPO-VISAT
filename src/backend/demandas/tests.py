@@ -5,6 +5,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.auth.models import User, Group
 from django.urls import reverse
 from .models import Demanda, ItemChecklist, Evidencia
+from unittest.mock import patch
 from .constants import ITENS_PADRAO
 from .forms import DemandaForm, EvidenciaForm
 
@@ -43,6 +44,11 @@ class FluxoFiscalTests(TestCase):
     def completar(self):
         self.iniciar()
         self.client.post(self.url('checklist'), self.respostas())
+        self.d.refresh_from_db()
+        self.d.relatorio = 'RASCUNHO DE TESTE'
+        self.d.relatorio_revisao = self.d.revisao
+        self.d.relatorio_revisado = True
+        self.d.save(update_fields=['relatorio', 'relatorio_revisao', 'relatorio_revisado'])
         return self.client.post(self.url('concluir_demanda'), {'confirmar': 'sim'})
 
     def test_inicio_contagem_prazo_e_isolamento(self):
@@ -124,17 +130,42 @@ class FluxoFiscalTests(TestCase):
         self.client.force_login(self.gerente)
         self.assertEqual(self.client.post(self.url('iniciar_demanda')).status_code, 403)
 
-    def test_fiscal_responsavel_visualiza_previa_sem_salvar_relatorio(self):
+    @patch('demandas.views.montar_rascunho', return_value='RASCUNHO GERADO AUTOMATICAMENTE')
+    def test_fiscal_gera_relatorio_confirma_revisao_e_assina(self, montar):
         self.d.status = 'andamento'
         self.d.save(update_fields=['status'])
-
-        resposta = self.client.get(self.url('gerar_relatorio'))
-
+        url = self.url('gerar_relatorio')
+        resposta = self.client.get(url)
         self.assertEqual(resposta.status_code, 200)
-        self.assertContains(resposta, 'RELATÓRIO TÉCNICO SANITÁRIO')
-
+        self.assertContains(resposta, 'Rascunho automático')
+        self.assertContains(resposta, 'gerador local não interpreta')
+        self.client.post(url, {'acao': 'gerar'})
+        montar.assert_called_once()
         self.d.refresh_from_db()
-        self.assertEqual(self.d.relatorio, '')
+        self.assertEqual(self.d.relatorio, 'RASCUNHO GERADO AUTOMATICAMENTE')
+        self.assertFalse(self.d.relatorio_revisado)
+        self.assertEqual(self.client.post(self.url('concluir_demanda'), {'confirmar': 'sim'}).status_code, 302)
+        self.d.refresh_from_db()
+        self.assertEqual(self.d.status, 'andamento')
+        self.assertEqual(self.client.post(url, {'acao': 'confirmar_revisao', 'confirmar_revisao': 'sim'}).status_code, 302)
+        self.d.refresh_from_db()
+        self.assertTrue(self.d.relatorio_revisado)
+        self.assertEqual(self.client.post(self.url('concluir_demanda'), {'confirmar': 'sim'}).status_code, 302)
+        self.d.refresh_from_db()
+        self.assertEqual(self.d.status, 'andamento')  # checklist ainda incompleto
+        montar.assert_called_once()
+
+    def test_alteracao_dos_dados_invalida_revisao_e_bloqueia_assinatura(self):
+        self.d.status = 'andamento'
+        self.d.relatorio = 'Rascunho'
+        self.d.relatorio_revisado = True
+        self.d.relatorio_revisao = self.d.revisao
+        self.d.save()
+        self.d.revisao += 1
+        self.d.save(update_fields=['revisao'])
+        self.client.post(self.url('concluir_demanda'), {'confirmar': 'sim'})
+        self.d.refresh_from_db()
+        self.assertEqual(self.d.status, 'andamento')
 
     def test_iniciar_post_csrf_retomar_sem_duplicar(self):
         self.assertEqual(self.client.get(self.url('iniciar_demanda')).status_code, 405)
@@ -210,7 +241,10 @@ class FluxoFiscalTests(TestCase):
         self.d.refresh_from_db(); self.assertNotEqual(self.d.endereco, 'INDEVIDO')
         self.client.post(self.url('homologar_demanda'))
         self.d.refresh_from_db(); self.assertTrue(self.d.homologada)
+        self.d.relatorio = 'Relatório de teste gerado pelo fiscal.'
+        self.d.save(update_fields=['relatorio'])
         self.assertEqual(self.client.get(self.url('gerar_relatorio')).status_code, 200)
+        self.assertEqual(self.client.post(self.url('gerar_relatorio'), {'acao': 'confirmar_revisao', 'confirmar_revisao': 'sim'}).status_code, 403)
         self.client.force_login(self.a)
         r = self.client.get(self.url()); self.assertContains(r, 'Fiscalização homologada'); self.assertNotContains(r, 'Aguardando homologação')
 
@@ -306,7 +340,7 @@ class MigracaoLegadaTests(TransactionTestCase):
     def test_preserva_registros_e_completa_itens_sem_duplicar(self):
         executor = MigrationExecutor(connection)
         anterior = [('demandas', '0001_initial')]
-        atual = [('demandas', '0004_demanda_assinatura_em_demanda_assinatura_nome')]
+        atual = [('demandas', '0007_demanda_relatorio_revisado_demanda_relatorio_revisao')]
         executor.migrate(anterior)
         try:
             apps = executor.loader.project_state(anterior).apps

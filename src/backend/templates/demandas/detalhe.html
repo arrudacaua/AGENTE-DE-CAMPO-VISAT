@@ -178,8 +178,34 @@
         {% endfor %}
     </div>
 </section>
-    {% if not gerente and demanda.status == 'andamento' and not demanda.homologada %}<section class="panel completion-panel"><div class="panel-heading"><div><span class="section-eyebrow">ENCERRAMENTO</span><h2>Concluir fiscalização</h2></div><span class="metric-icon metric-icon-green"><svg class="icon"><use href="#i-check-circle"></use></svg></span></div><p>Antes de concluir, confira todos os itens do checklist. Ao confirmar, o sistema registrará sua identificação e a data e hora da assinatura eletrônica.</p><form method="post" action="{% url 'concluir_demanda' demanda.numero %}">{% csrf_token %}<label class="checkbox-field"><input type="checkbox" name="confirmar" value="sim" required><span>Confirmo que revisei os registros da fiscalização.</span></label><button class="btn btn-primary" type="submit"><svg class="icon"><use href="#i-check"></use></svg> Concluir fiscalização</button></form></section>{% endif %}
-    {% if gerente %}<section class="panel completion-panel"><div class="panel-heading"><div><span class="section-eyebrow">VALIDAÇÃO DA GERÊNCIA</span><h2>Homologação e relatório</h2></div><span class="metric-icon metric-icon-green"><svg class="icon"><use href="#i-shield"></use></svg></span></div><div class="homologation-state"><span>Homologação</span>{% if demanda.homologada %}<span class="status-badge status-concluida"><span class="status-dot"></span> Homologada</span>{% else %}<span class="status-badge status-aberta"><span class="status-dot"></span> Pendente</span>{% endif %}</div><div class="button-wrap"><form method="post" action="{% url 'homologar_demanda' demanda.numero %}">{% csrf_token %}<button class="btn btn-primary" type="submit" {% if demanda.homologada %}disabled{% endif %}><svg class="icon"><use href="#i-check-circle"></use></svg> {% if demanda.homologada %}Já homologada{% else %}Homologar fiscalização{% endif %}</button></form>{% if demanda.homologada %}<a class="btn btn-secondary" href="{% url 'gerar_relatorio' demanda.numero %}"><svg class="icon"><use href="#i-file"></use></svg> Ver relatório técnico</a>{% endif %}</div>{% if demanda.relatorio %}<div class="sei-callout"><div><strong>Registro de vínculo com SEI</strong><p>Indicador interno de demonstração; não envia arquivos ao SEI.</p></div>{% if demanda.relatorio_vinculado_sei %}<span class="status-badge status-concluida">Registrado</span>{% else %}<form method="post" action="{% url 'vincular_sei' demanda.numero %}">{% csrf_token %}<button class="btn btn-ghost" type="submit">Registrar vínculo</button></form>{% endif %}</div>{% endif %}</section>{% endif %}
+    {% if not gerente and demanda.status == 'andamento' and not demanda.homologada %}
+    <section class="panel completion-panel">
+      <div class="panel-heading">
+        <div><span class="section-eyebrow">ENCERRAMENTO</span><h2>Assinatura e conclusão</h2></div>
+        <span class="metric-icon metric-icon-green"><svg class="icon"><use href="#i-check-circle"></use></svg></span>
+      </div>
+      {% if demanda.relatorio and demanda.relatorio_revisado and demanda.relatorio_revisao == demanda.revisao %}
+        <p>O relatório foi revisado. Confirme a assinatura para concluir a fiscalização.</p>
+        <form method="post" action="{% url 'concluir_demanda' demanda.numero %}">
+          {% csrf_token %}
+          <label class="checkbox-field">
+            <input type="checkbox" name="confirmar" value="sim" required>
+            <span>Confirmo a revisão e assino este relatório.</span>
+          </label>
+          <button class="btn btn-primary" type="submit">
+            <svg class="icon"><use href="#i-check"></use></svg>
+            Assinar e concluir fiscalização
+          </button>
+        </form>
+      {% else %}
+        <p>Gere e revise o rascunho do relatório antes de liberar a assinatura.</p>
+        <a class="btn btn-secondary" href="{% url 'gerar_relatorio' demanda.numero %}">
+          Gerar ou revisar relatório
+        </a>
+      {% endif %}
+    </section>
+    {% endif %}
+    {% if gerente %}<section class="panel completion-panel"><div class="panel-heading"><div><span class="section-eyebrow">VALIDAÇÃO DA GERÊNCIA</span><h2>Homologação e relatório</h2></div><span class="metric-icon metric-icon-green"><svg class="icon"><use href="#i-shield"></use></svg></span></div><div class="homologation-state"><span>Homologação</span>{% if demanda.homologada %}<span class="status-badge status-concluida"><span class="status-dot"></span> Homologada</span>{% else %}<span class="status-badge status-aberta"><span class="status-dot"></span> Pendente</span>{% endif %}</div><div class="button-wrap"><form method="post" action="{% url 'homologar_demanda' demanda.numero %}">{% csrf_token %}<button class="btn btn-primary" type="submit" {% if demanda.homologada %}disabled{% endif %}><svg class="icon"><use href="#i-check-circle"></use></svg> {% if demanda.homologada %}Já homologada{% else %}Homologar fiscalização{% endif %}</button></form>{% if demanda.homologada and demanda.relatorio %}<a class="btn btn-secondary" href="{% url 'gerar_relatorio' demanda.numero %}"><svg class="icon"><use href="#i-file"></use></svg> Ver relatório técnico</a>{% endif %}</div>{% if demanda.relatorio %}<div class="sei-callout"><div><strong>Registro de vínculo com SEI</strong><p>Indicador interno de demonstração; não envia arquivos ao SEI.</p></div>{% if demanda.relatorio_vinculado_sei %}<span class="status-badge status-concluida">Registrado</span>{% else %}<form method="post" action="{% url 'vincular_sei' demanda.numero %}">{% csrf_token %}<button class="btn btn-ghost" type="submit">Registrar vínculo</button></form>{% endif %}</div>{% endif %}</section>{% endif %}
   </div>
   <aside class="detail-aside"><section class="panel aside-card"><div class="panel-heading"><div><span class="section-eyebrow">LOCAL DA INSPEÇÃO</span><h2>Localização</h2></div><svg class="icon"><use href="#i-pin"></use></svg></div>{% if mapa_url %}
 <div class="map-preview"><iframe src="{{ mapa_url }}" title="Mapa do local da inspeção" loading="lazy" referrerpolicy="no-referrer" tabindex="-1"></iframe><button type="button" class="map-open-overlay" data-map-open aria-haspopup="dialog" aria-controls="map-dialog"><span>Ampliar mapa</span></button></div>
