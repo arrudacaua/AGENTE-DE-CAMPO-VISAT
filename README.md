@@ -8,6 +8,18 @@
   Sistema web para centralizar, organizar e acompanhar as demandas da Vigilância em Saúde do Trabalhador.
 </p>
 
+## 🌐 Acesso ao site
+
+O sistema está disponível publicamente:
+
+🔗 [Acessar o VISAT](https://agente-de-campo-visat.onrender.com/login/)
+
+## 🎥 Demonstração do sistema
+
+O vídeo a seguir apresenta o fluxo completo de uma demanda no VISAT, desde sua criação pelo gerente até a fiscalização e homologação.
+
+▶️ [Assistir à demonstração do VISAT](https://drive.google.com/file/d/1e2jiZRIgmznWu9FF9rFkZHjByo88C7mi/view?usp=sharing)
+
 ## 🎯 Sobre o projeto
 
 O VISAT recebe demandas de diferentes instituições que podem resultar em inspeções, análises e documentos técnicos. O projeto centraliza essas informações, facilitando a comunicação entre os inspetores e o acompanhamento dos processos.
