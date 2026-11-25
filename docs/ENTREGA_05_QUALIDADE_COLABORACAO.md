@@ -139,11 +139,11 @@ As evidências produzidas e previstas incluem:
 - [x] Aprovar os sete cenários E2E.
 - [x] Adaptar o script de teste offline da US07.
 - [x] Criar o workflow de integração contínua da Entrega 05.
-- [ ] Executar e validar o teste offline US07.
-- [ ] Confirmar a execução do workflow no GitHub Actions.
-- [ ] Conferir e anexar as evidências aos cartões do Trello.
-- [ ] Atualizar os registros de evidências Django no Trello.
-- [ ] Registrar os links finais das alterações e da entrega.
+- [x] Executar e validar o teste offline US07.
+- [x] Confirmar a execução do workflow no GitHub Actions.
+- [x] Conferir e anexar as evidências aos cartões do Trello.
+- [x] Atualizar os registros de evidências Django no Trello.
+- [x] Registrar os links finais das alterações e da entrega.
 
 **Observação:** os itens pendentes devem ser marcados como concluídos somente após a respectiva validação e disponibilização das evidências.
 ## 4.5. Relato de colaboração entre pares
