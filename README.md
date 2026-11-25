@@ -121,6 +121,7 @@ VISAT/
 │   └── database/
 │
 ├── .gitignore
+├── CONTRIBUTING.md
 ├── README.md
 └── requirements.txt
 ```
@@ -129,6 +130,10 @@ VISAT/
 - **frontend/** — interface e elementos visuais do sistema.
 - **backend/** — regras e funcionalidades da aplicação.
 - **database/** — estrutura e comandos do banco de dados.
+
+## 🤝 Como contribuir
+
+Quer contribuir? Veja o [guia de contribuição](CONTRIBUTING.md). Ele explica como configurar o ambiente, rodar o sistema e os testes, e o fluxo de branches, commits e pull requests do projeto.
 
 ## 📋 Board
 
