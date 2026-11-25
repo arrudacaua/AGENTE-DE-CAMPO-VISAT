@@ -59,7 +59,7 @@ jobs:
         run: |
           python manage.py migrate --noinput
           PYTHONPATH=. python ../../scripts/entrega05/preparar_demo.py
-          DEMANDA_ID=$(python manage.py shell -c "from demandas.models import Demanda; print(Demanda.objects.get(processo_sei='SEI-E05-US07-OFFLINE').pk)")
+          DEMANDA_ID=$(python manage.py shell --verbosity 0 -c "from demandas.models import Demanda; print(Demanda.objects.get(processo_sei='SEI-E05-US07-OFFLINE').pk)")
           echo "demanda_id=$DEMANDA_ID" >> "$GITHUB_OUTPUT"
           echo "Demanda US07 preparada: $DEMANDA_ID"
 
@@ -115,3 +115,4 @@ jobs:
             servidor-entrega05.log
           if-no-files-found: warn
           retention-days: 30
+
