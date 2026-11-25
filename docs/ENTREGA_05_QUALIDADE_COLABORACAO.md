@@ -166,3 +166,39 @@ As histórias foram organizadas em quatro duplas, com duas histórias atribuída
 Além das atividades realizadas nas histórias, Cauã ficou responsável pela revisão de todas as pull requests do projeto e pela resolução dos conflitos de integração encontrados durante o processo de merge.
 
 O histórico do Git foi utilizado para identificar as alterações e os respectivos autores. Nos casos de colaboração realizada por fora, sem commits individuais, o relato considera as informações fornecidas pelos integrantes, sem atribuir a eles alterações que não estejam registradas no repositório.
+
+## Atualização final - validações da Entrega 05
+
+Esta seção atualiza as situações de pendência registradas anteriormente.
+
+### Resultados confirmados
+
+**Testes automatizados Django**
+- 86 testes executados e aprovados.
+- 0 falhas e 0 erros.
+- Verificação do sistema sem problemas.
+- Registro completo: `docs/testes/resultado-testes-entrega05.txt`.
+
+**Testes E2E com Playwright**
+- Execução anterior: 7 de 7 cenários aprovados (US06, US08, US09, US10, US11, US12 e US18).
+- Execução diagnóstica posterior: US06, US11 e US18 passaram; US08, US09, US10 e US12 apresentaram timeout na localização de elementos da interface.
+- Os resultados representam execuções diferentes. A execução diagnóstica não apaga o resultado anterior.
+
+**Teste offline - US07**
+- Script executado com sucesso.
+- Validados checklist, quatro tipos de evidência, reabertura, indicadores e sincronização.
+- Evidências geradas em `evidencias-entrega05/US07-registros-offline/`.
+
+**Integração contínua - GitHub Actions**
+- Workflow `.github/workflows/entrega05-testes.yml` executado.
+- Corrigida a saída do comando Django utilizada no `GITHUB_OUTPUT`, adicionando `--verbosity 0`.
+- Correção registrada em commit e enviada para `main`.
+- Execução posterior confirmada como aprovada.
+
+### Evidências
+
+- Resultado Django: `docs/testes/resultado-testes-entrega05.txt`.
+- Evidências funcionais e registros offline: `evidencias-entrega05/`.
+- Workflow: `.github/workflows/entrega05-testes.yml`.
+
+**Observação:** os resultados de cada execução foram preservados separadamente. A aprovação do Django, do teste offline e do GitHub Actions não deve ser confundida com a execução diagnóstica posterior do Playwright.

@@ -1,0 +1,63 @@
+﻿RELATORIO DE TESTES E2E - VISAT / ENTREGA 05
+Ferramenta: Playwright
+
+1. EXECUCAO ANTERIOR
+Resultado registrado: 7 de 7 cenarios aprovados.
+
+- US06: Registrar evidencias da fiscalizacao
+- US08: Gerar rascunho do relatorio
+- US09: Revisar relatorio
+- US10: Assinar e concluir fiscalizacao
+- US11: Consultar indicadores
+- US12: Atribuir fiscal a demanda
+- US18: Cadastrar nova demanda
+
+2. EXECUCAO DIAGNOSTICA POSTERIOR
+
+Aprovados:
+- US06
+- US11
+- US18
+
+Timeouts na localizacao de elementos da interface:
+- US08
+- US09
+- US10
+- US12
+
+Observacao: esta execucao diagnostica e independente da execucao
+anterior de 7/7. Os timeouts nao anulam o resultado anterior.
+
+3. EVIDENCIAS DA EXECUCAO DIAGNOSTICA
+
+Capturas:
+- evidencias-entrega05/us06-sucesso.png
+- evidencias-entrega05/us08-erro.png
+- evidencias-entrega05/us09-erro.png
+- evidencias-entrega05/us10-erro.png
+- evidencias-entrega05/us11-sucesso.png
+- evidencias-entrega05/us12-erro.png
+- evidencias-entrega05/us18-sucesso.png
+
+Videos:
+- evidencias-entrega05/videos/
+
+4. TESTE OFFLINE - US07
+
+Execucao do script de validacao offline concluida com sucesso.
+Foram validados checklist, quatro tipos de evidencia, reabertura,
+indicadores e sincronizacao.
+
+Evidencias:
+- evidencias-entrega05/US07-registros-offline/resumo-pendente.png
+- evidencias-entrega05/US07-registros-offline/sincronizado.png
+- evidencias-entrega05/US07-registros-offline/*.webm
+
+5. SCRIPTS UTILIZADOS
+
+- scripts/entrega05/preparar_demo.py
+- scripts/entrega05/testar_historias.py
+- scripts/us07/testar_foto_offline.py
+
+Este documento preserva separadamente os resultados das execucoes,
+sem apresentar a execucao diagnostica como substituta da anterior.
