@@ -8,6 +8,28 @@
   Sistema web para centralizar, organizar e acompanhar as demandas da Vigilância em Saúde do Trabalhador.
 </p>
 
+## 🌐 Acesso ao site
+
+O sistema está disponível publicamente:
+
+🔗 [Acessar o VISAT](https://agente-de-campo-visat.onrender.com/login/)
+
+## 🔐 Credenciais de acesso 
+
+**Gerente**
+- E-mail: gerente_visat
+- Senha: Visat.ger123*
+
+**Fiscal**
+- E-mail: fiscal_visat
+- Senha: Visat.fis123*
+
+## 🎥 Demonstração do sistema
+
+O vídeo a seguir apresenta o fluxo completo de uma demanda no VISAT, desde sua criação pelo gerente até a fiscalização e homologação.
+
+▶️ [Assistir à demonstração do VISAT](https://drive.google.com/file/d/1e2jiZRIgmznWu9FF9rFkZHjByo88C7mi/view?usp=sharing)
+
 ## 🎯 Sobre o projeto
 
 O VISAT recebe demandas de diferentes instituições que podem resultar em inspeções, análises e documentos técnicos. O projeto centraliza essas informações, facilitando a comunicação entre os inspetores e o acompanhamento dos processos.
@@ -147,8 +169,6 @@ Projeto desenvolvido por estudantes de Sistemas de Informação.
 
 ## 📌 Status
 
-🚧 **Em desenvolvimento**
-
 ## 📦 Entrega 03 — Sprint 01
 <p align="center">
   <img src="docs/sprint01.png" width="175">
@@ -167,6 +187,12 @@ O projeto VISAT continua em desenvolvimento. Para consultar as implementações,
 <p align="center">
   <img src="docs/sprint02.png" width="175">
 </p>
+
+## 📦 Entrega 05 — Sprint 03
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/0c7b1e59-fe14-4db3-87c2-ad3a6e770524" width="175">
+</p>
+
 
 ### 🎬 Screencasts e evidências por história de usuário
 
