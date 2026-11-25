@@ -1,14 +1,16 @@
+from uuid import uuid4
 from datetime import date, timedelta
 from decimal import Decimal
-from django.test import TestCase, Client
+from django.test import TestCase, Client, TransactionTestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.auth.models import User, Group
 from django.urls import reverse
-from .models import Demanda, ItemChecklist, Evidencia
+from .models import Demanda, ItemChecklist, Evidencia, RespostaOfflineRecebida
 from unittest.mock import patch
 from .constants import ITENS_PADRAO
 from .forms import DemandaForm, EvidenciaForm
-
+from django.db import connection
+from django.db.migrations.executor import MigrationExecutor
 
 class FluxoFiscalTests(TestCase):
     @classmethod
@@ -166,6 +168,52 @@ class FluxoFiscalTests(TestCase):
         self.client.post(self.url('concluir_demanda'), {'confirmar': 'sim'})
         self.d.refresh_from_db()
         self.assertEqual(self.d.status, 'andamento')
+
+    @patch('demandas.views.montar_rascunho', return_value='RASCUNHO GERADO AUTOMATICAMENTE')
+    def test_alteracao_real_do_checklist_apos_revisao_bloqueia_assinatura(self, montar):
+        # Inicia a fiscalização e preenche o checklist.
+        self.iniciar()
+        self.client.post(self.url('checklist'), self.respostas())
+        self.d.refresh_from_db()
+
+        # Gera o relatório e confirma sua revisão.
+        url_relatorio = self.url('gerar_relatorio')
+        self.client.post(url_relatorio, {'acao': 'gerar'})
+        self.client.post(url_relatorio, {
+            'acao': 'confirmar_revisao',
+            'confirmar_revisao': 'sim',
+        })
+
+        self.d.refresh_from_db()
+        self.assertTrue(self.d.relatorio_revisado)
+        revisao_relatorio = self.d.relatorio_revisao
+
+        # Altera uma resposta real do checklist após a revisão.
+        dados = self.respostas()
+        primeiro_item = self.d.itens_checklist.first()
+        dados[f'item_{primeiro_item.pk}'] = 'nao_conforme'
+
+        resposta = self.client.post(self.url('checklist'), dados)
+        self.assertEqual(resposta.status_code, 302)
+
+        self.d.refresh_from_db()
+        self.assertEqual(self.d.revisao, revisao_relatorio + 1)
+        self.assertEqual(self.d.relatorio_revisao, revisao_relatorio)
+        self.assertEqual(
+            self.d.itens_checklist.get(pk=primeiro_item.pk).resposta,
+            'nao_conforme',
+        )
+
+        # Tenta assinar com o relatório desatualizado.
+        self.client.post(
+            self.url('concluir_demanda'),
+            {'confirmar': 'sim'},
+        )
+
+        self.d.refresh_from_db()
+        self.assertEqual(self.d.status, 'andamento')
+        self.assertFalse(self.d.assinatura_confirmada)
+        montar.assert_called_once()
 
     def test_iniciar_post_csrf_retomar_sem_duplicar(self):
         self.assertEqual(self.client.get(self.url('iniciar_demanda')).status_code, 405)
@@ -352,11 +400,406 @@ class FluxoFiscalTests(TestCase):
         resposta_inicio = cliente_seguro.get(reverse('inicio'))
         self.assertEqual(resposta_inicio.status_code, 200)
 
+class AtribuicaoFiscalTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.gerente = User.objects.create_user(
+            'gerente_atribuicao',
+            password='SenhaTeste123!',
+            is_staff=True
+        )
+        cls.fiscal = User.objects.create_user(
+            'fiscal_atribuicao',
+            password='SenhaTeste123!'
+        )
+        cls.outro_fiscal = User.objects.create_user(
+            'outro_fiscal_atribuicao',
+            password='SenhaTeste123!'
+        )
 
-from django.test import TransactionTestCase
-from django.db import connection
-from django.db.migrations.executor import MigrationExecutor
+    def setUp(self):
+        self.demanda = Demanda.objects.create(
+            processo_sei='SEI-ATRIBUICAO-001',
+            numero_os='OS-ATRIBUICAO-001',
+            descricao='Teste de atribuição de fiscal',
+            endereco='Rua de teste',
+            distrito='Distrito I',
+            bairro='Centro',
+            prazo=date.today() + timedelta(days=7),
+            fiscal=None
+        )
 
+    def url(self):
+        return reverse(
+            'atribuir_fiscal',
+            args=[self.demanda.pk]
+        )
+
+    def test_gerente_atribui_fiscal_valido(self):
+        self.client.force_login(self.gerente)
+
+        resposta = self.client.post(
+            self.url(),
+            {'fiscal': self.fiscal.pk}
+        )
+
+        self.assertEqual(resposta.status_code, 302)
+
+        self.demanda.refresh_from_db()
+        self.assertEqual(self.demanda.fiscal, self.fiscal)
+
+    def test_fiscal_nao_pode_atribuir_fiscal(self):
+        self.client.force_login(self.fiscal)
+
+        resposta = self.client.post(
+            self.url(),
+            {'fiscal': self.outro_fiscal.pk}
+        )
+
+        self.assertEqual(resposta.status_code, 302)
+
+        self.demanda.refresh_from_db()
+        self.assertIsNone(self.demanda.fiscal)
+
+    def test_atribuicao_sem_fiscal_e_bloqueada(self):
+        self.client.force_login(self.gerente)
+
+        resposta = self.client.post(self.url(), {})
+
+        self.assertEqual(resposta.status_code, 302)
+
+        self.demanda.refresh_from_db()
+        self.assertIsNone(self.demanda.fiscal)
+
+    def test_nao_permite_trocar_fiscal_ja_atribuido(self):
+        self.demanda.fiscal = self.fiscal
+        self.demanda.save(update_fields=['fiscal'])
+
+        self.client.force_login(self.gerente)
+
+        resposta = self.client.post(
+            self.url(),
+            {'fiscal': self.outro_fiscal.pk}
+        )
+
+        self.assertEqual(resposta.status_code, 302)
+
+        self.demanda.refresh_from_db()
+        self.assertEqual(self.demanda.fiscal, self.fiscal)
+
+    def test_nao_permite_atribuir_usuario_gerente(self):
+        self.client.force_login(self.gerente)
+
+        resposta = self.client.post(
+            self.url(),
+            {'fiscal': self.gerente.pk}
+        )
+
+        self.assertEqual(resposta.status_code, 302)
+
+        self.demanda.refresh_from_db()
+        self.assertIsNone(self.demanda.fiscal)
+
+    def test_anonimo_nao_pode_atribuir_fiscal(self):
+        resposta = self.client.post(
+        self.url(),
+        {'fiscal': self.fiscal.pk}
+    )
+
+        self.assertEqual(resposta.status_code, 302)
+
+        self.demanda.refresh_from_db()
+        self.assertIsNone(self.demanda.fiscal)
+
+    def test_get_nao_permite_atribuir_fiscal(self):
+        self.client.force_login(self.gerente)
+
+        resposta = self.client.get(self.url())
+
+        self.assertEqual(resposta.status_code, 405)
+
+        self.demanda.refresh_from_db()
+        self.assertIsNone(self.demanda.fiscal)
+
+class SincronizacaoOfflineTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.fiscal = User.objects.create_user(
+            'fiscal_offline',
+            password='SenhaTeste123!'
+        )
+        cls.outro_fiscal = User.objects.create_user(
+            'outro_fiscal_offline',
+            password='SenhaTeste123!'
+        )
+        cls.gerente = User.objects.create_user(
+            'gerente_offline',
+            password='SenhaTeste123!',
+            is_staff=True
+        )
+
+    def setUp(self):
+        self.client.force_login(self.fiscal)
+
+        self.demanda = Demanda.objects.create(
+            processo_sei='SEI-OFFLINE-001',
+            numero_os='OS-OFFLINE-001',
+            descricao='Teste de sincronização offline',
+            endereco='Rua de teste',
+            distrito='Distrito I',
+            bairro='Centro',
+            prazo=date.today() + timedelta(days=7),
+            fiscal=self.fiscal,
+            status='andamento'
+        )
+
+        ItemChecklist.objects.bulk_create([
+            ItemChecklist(demanda=self.demanda, item=item)
+            for item in ITENS_PADRAO
+        ])
+
+        self.identificador = uuid4()
+
+    def url(self, acao='sincronizar_evidencia'):
+        return reverse(acao, args=[self.demanda.pk])
+
+    def arquivo(self):
+        return SimpleUploadedFile(
+            'foto.jpg',
+            b'conteudo-da-foto',
+            content_type='image/jpeg'
+        )
+
+    def dados_evidencia(self):
+        return {
+            'fiscal': str(self.fiscal.pk),
+            'identificador': str(self.identificador),
+            'tipo': 'foto',
+            'descricao': 'Foto registrada offline',
+            'arquivo': self.arquivo(),
+        }
+
+    def test_sincronizar_evidencia_valida(self):
+        resposta = self.client.post(
+            self.url(),
+            self.dados_evidencia()
+        )
+
+        self.assertEqual(resposta.status_code, 200)
+
+        evidencia = Evidencia.objects.get(
+            identificador_offline=self.identificador
+        )
+
+        self.assertEqual(evidencia.demanda, self.demanda)
+        self.assertEqual(evidencia.tipo, 'foto')
+
+    def test_reenvio_da_evidencia_nao_gera_duplicidade(self):
+        dados = self.dados_evidencia()
+
+        primeira = self.client.post(self.url(), dados)
+        segunda = self.client.post(
+            self.url(),
+            self.dados_evidencia()
+        )
+
+        self.assertEqual(primeira.status_code, 200)
+        self.assertEqual(segunda.status_code, 200)
+        self.assertEqual(
+            Evidencia.objects.filter(
+                identificador_offline=self.identificador
+            ).count(),
+            1
+        )
+
+    def test_usuario_nao_autenticado_nao_pode_sincronizar(self):
+        self.client.logout()
+
+        resposta = self.client.post(
+            self.url(),
+            self.dados_evidencia()
+        )
+
+        self.assertEqual(resposta.status_code, 401)
+
+    def test_outro_fiscal_nao_pode_sincronizar_demanda(self):
+        self.client.force_login(self.outro_fiscal)
+
+        dados = self.dados_evidencia()
+        dados['fiscal'] = str(self.outro_fiscal.pk)
+
+        resposta = self.client.post(self.url(), dados)
+
+        self.assertEqual(resposta.status_code, 403)
+        self.assertEqual(Evidencia.objects.count(), 0)
+
+    def test_nao_sincroniza_evidencia_apos_encerramento(self):
+        self.demanda.status = 'concluida'
+        self.demanda.save(update_fields=['status'])
+
+        resposta = self.client.post(
+            self.url(),
+            self.dados_evidencia()
+        )
+
+        self.assertEqual(resposta.status_code, 409)
+        self.assertEqual(Evidencia.objects.count(), 0)
+
+    def test_sincronizar_resposta_do_checklist(self):
+        item = self.demanda.itens_checklist.first()
+
+        resposta = self.client.post(
+            self.url('sincronizar_resposta'),
+            {
+                'fiscal': str(self.fiscal.pk),
+                'identificador': str(self.identificador),
+                'item': str(item.pk),
+                'anterior': '',
+                'resposta': 'conforme',
+            }
+        )
+
+        self.assertEqual(resposta.status_code, 200)
+
+        item.refresh_from_db()
+        self.assertEqual(item.resposta, 'conforme')
+        self.assertTrue(
+            RespostaOfflineRecebida.objects.filter(
+                pk=self.identificador,
+                item=item
+            ).exists()
+        )
+
+    def test_reenvio_da_resposta_nao_gera_duplicidade(self):
+        item = self.demanda.itens_checklist.first()
+
+        dados = {
+            'fiscal': str(self.fiscal.pk),
+            'identificador': str(self.identificador),
+            'item': str(item.pk),
+            'anterior': '',
+            'resposta': 'conforme',
+        }
+
+        primeira = self.client.post(
+            self.url('sincronizar_resposta'),
+            dados
+        )
+
+        segunda = self.client.post(
+            self.url('sincronizar_resposta'),
+            dados
+        )
+
+        self.assertEqual(primeira.status_code, 200)
+        self.assertEqual(segunda.status_code, 200)
+        self.assertEqual(
+            RespostaOfflineRecebida.objects.filter(
+                pk=self.identificador
+            ).count(),
+            1
+        )
+
+    def test_conflito_quando_item_foi_alterado_em_outro_dispositivo(self):
+        item = self.demanda.itens_checklist.first()
+        item.resposta = 'nao_conforme'
+        item.save(update_fields=['resposta'])
+
+        resposta = self.client.post(
+            self.url('sincronizar_resposta'),
+            {
+                'fiscal': str(self.fiscal.pk),
+                'identificador': str(self.identificador),
+                'item': str(item.pk),
+                'anterior': '',
+                'resposta': 'conforme',
+            }
+        )
+
+        self.assertEqual(resposta.status_code, 409)
+
+        item.refresh_from_db()
+        self.assertEqual(item.resposta, 'nao_conforme')
+
+    def test_identificador_invalido_e_rejeitado(self):
+        dados = self.dados_evidencia()
+        dados['identificador'] = 'identificador-invalido'
+
+        resposta = self.client.post(self.url(), dados)
+
+        self.assertEqual(resposta.status_code, 400)
+        self.assertEqual(Evidencia.objects.count(), 0)
+
+    def test_gerente_nao_pode_sincronizar(self):
+        self.client.force_login(self.gerente)
+
+        dados = self.dados_evidencia()
+        dados['fiscal'] = str(self.gerente.pk)
+
+        resposta = self.client.post(self.url(), dados)
+
+        self.assertEqual(resposta.status_code, 403)
+        self.assertEqual(Evidencia.objects.count(), 0)
+
+    def test_resposta_invalida_do_checklist_e_rejeitada(self):
+        item = self.demanda.itens_checklist.first()
+
+        resposta = self.client.post(
+            self.url('sincronizar_resposta'),
+            {
+                'fiscal': str(self.fiscal.pk),
+                'identificador': str(self.identificador),
+                'item': str(item.pk),
+                'anterior': '',
+                'resposta': 'resposta_invalida',
+            }
+        )
+
+        self.assertEqual(resposta.status_code, 400)
+
+        item.refresh_from_db()
+        self.assertEqual(item.resposta, '')
+
+    def test_item_de_outra_demanda_nao_pode_ser_sincronizado(self):
+        outra_demanda = Demanda.objects.create(
+            processo_sei='SEI-OFFLINE-002',
+            numero_os='OS-OFFLINE-002',
+            descricao='Outra demanda',
+            endereco='Rua de teste',
+            distrito='Distrito I',
+            bairro='Centro',
+            prazo=date.today() + timedelta(days=7),
+            fiscal=self.fiscal,
+            status='andamento'
+        )
+
+        outro_item = ItemChecklist.objects.create(
+            demanda=outra_demanda,
+            item='Item de outra demanda'
+        )
+
+        resposta = self.client.post(
+            self.url('sincronizar_resposta'),
+            {
+                'fiscal': str(self.fiscal.pk),
+                'identificador': str(self.identificador),
+                'item': str(outro_item.pk),
+                'anterior': '',
+                'resposta': 'conforme',
+            }
+        )
+
+        self.assertEqual(resposta.status_code, 400)
+        self.assertFalse(
+            RespostaOfflineRecebida.objects.filter(
+                pk=self.identificador
+            ).exists()
+        )
+
+    def test_sincronizacao_nao_aceita_get(self):
+        resposta = self.client.get(self.url())
+
+        self.assertEqual(resposta.status_code, 405)
 
 class MigracaoLegadaTests(TransactionTestCase):
     def test_preserva_registros_e_completa_itens_sem_duplicar(self):
@@ -643,6 +1086,107 @@ class EvidenciasTests(TestCase):
             self.assertTrue(
                 Evidencia.objects.filter(pk=evidencia.pk).exists()
             )
+
+    def test_excluir_foto_por_post(self):
+        foto = Evidencia.objects.create(
+            demanda=self.demanda,
+            tipo='foto',
+            descricao='Foto para excluir',
+            arquivo=self.arquivo()
+        )
+
+        resposta = self.client.get(
+            reverse(
+                'excluir_evidencia',
+                args=[self.demanda.pk, foto.pk]
+            )
+        )
+
+        self.assertEqual(resposta.status_code, 405)
+        self.assertTrue(
+            Evidencia.objects.filter(pk=foto.pk).exists()
+        )
+
+        resposta = self.client.post(
+            reverse(
+                'excluir_evidencia',
+                args=[self.demanda.pk, foto.pk]
+            )
+        )
+
+        self.assertRedirects(resposta, self.url())
+        self.assertFalse(
+            Evidencia.objects.filter(pk=foto.pk).exists()
+        )
+
+    def test_excluir_video_por_post(self):
+        video = Evidencia.objects.create(
+            demanda=self.demanda,
+            tipo='video',
+            descricao='Vídeo para excluir',
+            arquivo=self.arquivo(
+                'inspecao.mp4',
+                b'video-teste',
+                'video/mp4'
+            )
+        )
+
+        resposta = self.client.post(
+            reverse(
+                'excluir_evidencia',
+                args=[self.demanda.pk, video.pk]
+            )
+        )
+
+        self.assertRedirects(resposta, self.url())
+        self.assertFalse(
+            Evidencia.objects.filter(pk=video.pk).exists()
+        )
+
+    def test_outro_fiscal_nao_pode_excluir_foto(self):
+        foto = Evidencia.objects.create(
+            demanda=self.demanda,
+            tipo='foto',
+            descricao='Foto protegida',
+            arquivo=self.arquivo()
+        )
+
+        self.client.force_login(self.outro_fiscal)
+
+        resposta = self.client.post(
+            reverse(
+                'excluir_evidencia',
+                args=[self.demanda.pk, foto.pk]
+            )
+        )
+
+        self.assertEqual(resposta.status_code, 404)
+        self.assertTrue(
+            Evidencia.objects.filter(pk=foto.pk).exists()
+        )
+
+    def test_demanda_encerrada_bloqueia_exclusao_de_foto(self):
+        foto = Evidencia.objects.create(
+            demanda=self.demanda,
+            tipo='foto',
+            descricao='Foto preservada',
+            arquivo=self.arquivo()
+        )
+
+        self.demanda.status = 'concluida'
+        self.demanda.save(update_fields=['status'])
+
+        resposta = self.client.post(
+            reverse(
+                'excluir_evidencia',
+                args=[self.demanda.pk, foto.pk]
+            )
+        )
+
+        self.assertRedirects(resposta, self.url())
+        self.assertTrue(
+            Evidencia.objects.filter(pk=foto.pk).exists()
+        )
 
     def test_outro_fiscal_nao_pode_excluir_audio(self):
         audio = Evidencia.objects.create(
