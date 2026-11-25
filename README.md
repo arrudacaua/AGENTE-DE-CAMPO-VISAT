@@ -169,8 +169,6 @@ Projeto desenvolvido por estudantes de Sistemas de Informação.
 
 ## 📌 Status
 
-🚧 **Em desenvolvimento**
-
 ## 📦 Entrega 03 — Sprint 01
 <p align="center">
   <img src="docs/sprint01.png" width="175">
@@ -189,6 +187,12 @@ O projeto VISAT continua em desenvolvimento. Para consultar as implementações,
 <p align="center">
   <img src="docs/sprint02.png" width="175">
 </p>
+
+## 📦 Entrega 05 — Sprint 03
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/0c7b1e59-fe14-4db3-87c2-ad3a6e770524" width="250">
+</p>
+
 
 ### 🎬 Screencasts e evidências por história de usuário
 
