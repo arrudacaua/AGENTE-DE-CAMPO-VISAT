@@ -1,4 +1,5 @@
 """Runtime local: dados fora do pacote, backup e servidor somente loopback."""
+from contextlib import closing
 import os
 import secrets
 import sqlite3
@@ -48,11 +49,18 @@ def backup_database(database):
     database = Path(database)
     if not database.exists():
         return None
+
     folder = database.parent / 'backups_visat'
     folder.mkdir(exist_ok=True)
-    target = folder / ('db_' + datetime.now().strftime('%Y%m%d_%H%M%S_%f') + '.sqlite3')
-    with sqlite3.connect(database) as source, sqlite3.connect(target) as dest:
-        source.backup(dest)
+
+    target = folder / (
+        'db_' + datetime.now().strftime('%Y%m%d_%H%M%S_%f') + '.sqlite3'
+    )
+
+    with closing(sqlite3.connect(database)) as source:
+        with closing(sqlite3.connect(target)) as dest:
+            source.backup(dest)
+
     return target
 
 
