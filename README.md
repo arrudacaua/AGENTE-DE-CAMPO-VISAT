@@ -14,6 +14,16 @@ O sistema está disponível publicamente:
 
 🔗 [Acessar o VISAT](https://agente-de-campo-visat.onrender.com/login/)
 
+## 🔐 Credenciais de acesso 
+
+**Gerente**
+- E-mail: gerente_visat
+- Senha: Visat.ger123*
+
+**Fiscal**
+- E-mail: fiscal_visat
+- Senha: Visat.fis123*
+
 ## 🎥 Demonstração do sistema
 
 O vídeo a seguir apresenta o fluxo completo de uma demanda no VISAT, desde sua criação pelo gerente até a fiscalização e homologação.
