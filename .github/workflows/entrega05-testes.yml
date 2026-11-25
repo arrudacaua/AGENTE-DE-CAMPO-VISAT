@@ -1,0 +1,117 @@
+﻿name: Entrega 05 - Qualidade e Colaboração
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/backend/**'
+      - 'scripts/entrega05/**'
+      - 'scripts/us07/testar_foto_offline.py'
+      - 'docs/**'
+      - '.github/workflows/entrega05-testes.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'src/backend/**'
+      - 'scripts/entrega05/**'
+      - 'scripts/us07/testar_foto_offline.py'
+      - 'docs/**'
+      - '.github/workflows/entrega05-testes.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  qualidade-colaboracao:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: src/backend
+
+    env:
+      DATABASE_URL: sqlite:///entrega05.sqlite3
+      BASE_URL: http://127.0.0.1:8000
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Instalar dependências
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt playwright
+          python -m playwright install --with-deps chromium
+
+      - name: Verificar configuração Django
+        run: python manage.py check
+
+      - name: Preparar banco isolado e dados da Entrega 05
+        id: preparar
+        run: |
+          python manage.py migrate --noinput
+          PYTHONPATH=. python ../../scripts/entrega05/preparar_demo.py
+          DEMANDA_ID=$(python manage.py shell -c "from demandas.models import Demanda; print(Demanda.objects.get(processo_sei='SEI-E05-US07-OFFLINE').pk)")
+          echo "demanda_id=$DEMANDA_ID" >> "$GITHUB_OUTPUT"
+          echo "Demanda US07 preparada: $DEMANDA_ID"
+
+      - name: Executar testes automatizados Django
+        run: |
+          set -o pipefail
+          python manage.py test demandas --verbosity 2 2>&1 | tee ../../resultado-testes-entrega05.txt
+
+      - name: Iniciar servidor Django
+        run: |
+          python manage.py runserver 127.0.0.1:8000 --noreload > ../../servidor-entrega05.log 2>&1 &
+          echo $! > ../../django-entrega05.pid
+          python - <<'PY'
+          import time
+          import urllib.request
+
+          for tentativa in range(40):
+              try:
+                  urllib.request.urlopen(
+                      "http://127.0.0.1:8000/login/",
+                      timeout=2,
+                  )
+                  print("Servidor Django pronto.")
+                  break
+              except Exception:
+                  time.sleep(1)
+          else:
+              raise RuntimeError("Servidor Django não iniciou.")
+          PY
+
+      - name: Executar testes E2E das histórias US06, US08, US09, US10, US11, US12 e US18
+        working-directory: .
+        run: python scripts/entrega05/testar_historias.py
+
+      - name: Executar teste offline US07
+        working-directory: .
+        run: |
+          python scripts/us07/testar_foto_offline.py \
+            --url "$BASE_URL" \
+            --demanda "${{ steps.preparar.outputs.demanda_id }}" \
+            --usuario fiscal_e05 \
+            --senha 'DemoFiscalE05!' \
+            --evidencias evidencias-entrega05
+
+      - name: Salvar evidências e resultados
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: evidencias-entrega05
+          path: |
+            evidencias-entrega05/
+            resultado-testes-entrega05.txt
+            servidor-entrega05.log
+          if-no-files-found: warn
+          retention-days: 30

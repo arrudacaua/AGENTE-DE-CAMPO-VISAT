@@ -7,13 +7,13 @@ from pathlib import Path
 from playwright.sync_api import expect, sync_playwright
 
 
-def testar(url, numero, chromium):
+def testar(url, numero, chromium, usuario, senha, evidencias):
     destino = f"{url}/demanda/{numero}/"
     descricao = f"Foto de teste US07 {uuid4()}"
     png = base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=")
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(executable_path=chromium)
-        pasta = Path("evidencias-entrega03/US07-registros-offline")
+        pasta = Path(evidencias) / "US07-registros-offline"
         pasta.mkdir(parents=True, exist_ok=True)
         context = browser.new_context(record_video_dir=str(pasta))
         # O runner não possui periféricos. Som e quadros sintéticos alimentam o MediaRecorder real.
@@ -36,8 +36,8 @@ def testar(url, numero, chromium):
         }""")
         page = context.new_page()
         page.goto(destino)
-        page.locator('[name="username"]').fill("fiscal_demo")
-        page.locator('[name="password"]').fill("DemoFiscal123!")
+        page.locator('[name="username"]').fill(usuario)
+        page.locator('[name="password"]').fill(senha)
         page.locator('button[type="submit"]').click()
         page.goto(destino)
         page.wait_for_function("navigator.serviceWorker.controller !== null")
@@ -157,6 +157,9 @@ if __name__ == "__main__":
     parser.add_argument("--url", default="http://127.0.0.1:8000")
     parser.add_argument("--demanda", type=int, default=1)
     parser.add_argument("--chromium")
+    parser.add_argument("--usuario", default="fiscal_demo")
+    parser.add_argument("--senha", default="DemoFiscal123!")
+    parser.add_argument("--evidencias", default="evidencias-entrega03")
     args = parser.parse_args()
-    testar(args.url, args.demanda, args.chromium)
+    testar(args.url, args.demanda, args.chromium, args.usuario, args.senha, args.evidencias)
     print("OK: checklist e quatro tipos de evidência, reabertura, indicadores e sincronização.")
