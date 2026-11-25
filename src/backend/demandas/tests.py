@@ -257,6 +257,28 @@ class FluxoFiscalTests(TestCase):
         d = Demanda.objects.get(processo_sei='NOVO')
         self.assertEqual(d.status, 'aberta'); self.assertEqual(d.itens_checklist.count(), 6)
 
+    def test_cadastro_demanda_exige_processo_sei(self):
+        self.client.force_login(self.gerente)
+
+        resposta = self.client.post(
+            reverse('criar_demanda'),
+            {
+                'processo_sei': '',
+                'descricao': 'Demanda externa de teste',
+                'endereco': 'Rua de teste',
+                'distrito': 'Distrito I',
+                'bairro': 'Centro',
+                'prazo': '2027-01-01',
+                'fiscal': self.a.pk,
+                'prioridade': 'alta',
+            }
+        )
+
+        self.assertEqual(resposta.status_code, 200)
+        self.assertFalse(Demanda.objects.filter(
+            descricao='Demanda externa de teste'
+        ).exists())
+        self.assertIn('processo_sei', resposta.context['form'].errors)
 
     def test_cadastro_demanda_restrito_a_gerencia(self):
         self.client.logout()
