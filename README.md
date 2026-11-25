@@ -190,7 +190,7 @@ O projeto VISAT continua em desenvolvimento. Para consultar as implementações,
 
 ## 📦 Entrega 05 — Sprint 03
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/0c7b1e59-fe14-4db3-87c2-ad3a6e770524" width="250">
+  <img src="https://github.com/user-attachments/assets/0c7b1e59-fe14-4db3-87c2-ad3a6e770524" width="175">
 </p>
 
 
